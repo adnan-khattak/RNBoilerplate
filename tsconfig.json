@@ -11,7 +11,9 @@
       "@theme/*": ["src/theme/*"],
       "@navigation/*": ["src/navigation/*"],
       "@services/*": ["src/services/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@config/*": ["src/config/*"],
+      "@state/*": ["src/state/*"]
     }
   },
   "include": [

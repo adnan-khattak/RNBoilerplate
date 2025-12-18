@@ -1,52 +1,200 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# React Native CRUD Boilerplate
 
-# Getting Started
+A production-ready React Native boilerplate with CRUD operations, featuring TypeScript, React Navigation, React Query, and a comprehensive theming system.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## ✨ Features
 
-## Step 1: Start Metro
+- **TypeScript** - Type-safe development
+- **React Navigation v7** - Native stack navigation with typed routes
+- **React Query (TanStack Query)** - Powerful data fetching & caching
+- **Context + Reducer** - Lightweight global state management
+- **Theming System** - Design tokens (colors, spacing, typography)
+- **Reusable Components** - Button, Input, Text, Card, Loading, EmptyState, ErrorState
+- **Path Aliases** - Clean imports with `@components`, `@screens`, etc.
+- **CRUD Ready** - Complete Create, Read, Update, Delete flow
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 📁 Project Structure
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+```
+src/
+├── assets/          # Images, fonts, etc.
+├── components/      # Reusable UI components
+│   ├── Button.tsx
+│   ├── Card.tsx
+│   ├── EmptyState.tsx
+│   ├── ErrorState.tsx
+│   ├── Input.tsx
+│   ├── Loading.tsx
+│   ├── Text.tsx
+│   └── index.ts
+├── config/          # App configuration & constants
+│   └── constants.ts
+├── navigation/      # Navigation setup & types
+│   ├── RootNavigator.tsx
+│   └── types.ts
+├── screens/         # Screen components
+│   ├── CreateScreen.tsx
+│   ├── DetailScreen.tsx
+│   ├── EditScreen.tsx
+│   ├── HomeScreen.tsx
+│   └── ProfileScreen.tsx
+├── services/        # API calls & hooks
+│   ├── api.ts       # Raw API functions
+│   ├── hooks.ts     # React Query hooks
+│   └── index.ts
+├── state/           # Global state (Context + Reducer)
+│   ├── AppContext.tsx
+│   ├── appReducer.ts
+│   └── appTypes.ts
+├── theme/           # Design tokens & styles
+│   ├── theme.ts     # Colors, spacing, typography
+│   ├── styles.ts    # Reusable StyleSheet styles
+│   └── index.ts
+└── utils/           # Helper functions
+    └── helpers.ts
+```
 
-```sh
-# Using npm
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js >= 20
+- React Native CLI
+- Xcode (for iOS)
+- Android Studio (for Android)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd rnBoilerplate
+
+# Install dependencies
+npm install
+
+# iOS only: Install pods
+cd ios && bundle install && bundle exec pod install && cd ..
+```
+
+### Running the App
+
+```bash
+# Start Metro bundler
 npm start
 
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
+# Run on Android
 npm run android
 
-# OR using Yarn
-yarn android
+# Run on iOS
+npm run ios
 ```
 
-### iOS
+## 🎨 Using the Theme
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+```tsx
+import { colors, spacing, typography } from '@theme';
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.background,
+    padding: spacing.base,
+  },
+  title: {
+    fontSize: typography.fontSize.xl,
+    color: colors.text,
+  },
+});
 ```
 
-Then, and every time you update your native dependencies, run:
+## 📦 Using Components
 
-```sh
-bundle exec pod install
+```tsx
+import { Button, Text, Input, Card, Loading, EmptyState } from '@components';
+
+// Button variants: primary, secondary, outline, ghost, danger, success
+<Button title="Submit" variant="primary" onPress={handleSubmit} />
+
+// Text with variants
+<Text variant="h1">Heading</Text>
+<Text variant="body" color="muted">Description</Text>
+
+// Input with validation
+<Input label="Email" error={errors.email} required />
+
+// Loading state
+<Loading message="Fetching data..." fullScreen />
+
+// Empty state
+<EmptyState 
+  title="No items" 
+  description="Add your first item" 
+  actionLabel="Add Item"
+  onAction={() => navigation.navigate('Create')}
+/>
 ```
+
+## 🔌 Using API Hooks
+
+```tsx
+import { useItems, useCreateItem, useUpdateItem, useDeleteItem } from '@services';
+
+// Fetch all items
+const { data: items, isLoading, error, refetch } = useItems();
+
+// Create item
+const createMutation = useCreateItem();
+createMutation.mutate({ name: 'New Item', description: 'Details' });
+
+// Update item  
+const updateMutation = useUpdateItem();
+updateMutation.mutate({ id: '123', data: { name: 'Updated' } });
+
+// Delete item
+const deleteMutation = useDeleteItem();
+deleteMutation.mutate('123');
+```
+
+## 🛠 Customization
+
+### Changing API Base URL
+
+Edit `src/config/constants.ts`:
+
+```ts
+export const API_CONFIG = {
+  BASE_URL: 'https://your-api.com/v1',
+  // ...
+};
+```
+
+### Adding New Screens
+
+1. Create screen in `src/screens/`
+2. Add to `src/screens/index.ts`
+3. Add route type in `src/navigation/types.ts`
+4. Register in `src/navigation/RootNavigator.tsx`
+
+### Adding New Components
+
+1. Create component in `src/components/`
+2. Export from `src/components/index.ts`
+
+## 📝 Available Scripts
+
+- `npm start` - Start Metro bundler
+- `npm run android` - Run on Android
+- `npm run ios` - Run on iOS
+- `npm run lint` - Run ESLint
+- `npm test` - Run tests
+
+## 🤝 Contributing
+
+Feel free to submit issues and pull requests.
+
+## 📄 License
+
+MIT
 
 For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
 
