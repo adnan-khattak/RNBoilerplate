@@ -6,7 +6,9 @@ export interface Item {
   id: string;
   name: string;
   description?: string;
+  price?: number;
   createdAt?: string;
+  updatedAt?: string;
 }
 
 // Get all items
@@ -24,7 +26,9 @@ export const getItem = async (id: string): Promise<Item> => {
 };
 
 // Create a new item
-export const createItem = async (data: Omit<Item, 'id' | 'createdAt'>): Promise<Item> => {
+export const createItem = async (
+  data: Omit<Item, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<Item> => {
   const res = await fetch(`${API_PREFIX}/items`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -35,7 +39,10 @@ export const createItem = async (data: Omit<Item, 'id' | 'createdAt'>): Promise<
 };
 
 // Update existing item
-export const updateItem = async (id: string, data: Partial<Omit<Item, 'id' | 'createdAt'>>): Promise<Item> => {
+export const updateItem = async (
+  id: string,
+  data: Partial<Omit<Item, 'id' | 'createdAt' | 'updatedAt'>>
+): Promise<Item> => {
   const res = await fetch(`${API_PREFIX}/items/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

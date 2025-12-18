@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, Alert, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, FlatList, Alert, RefreshControl, TouchableOpacity, SafeAreaView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button, Text } from '../components';
 import { getItems, deleteItem, Item } from '../services/api';
@@ -73,7 +73,7 @@ export default function HomeScreen({ navigation }: Props) {
     >
       <View style={[layout.rowBetween, { alignItems: 'flex-start', marginBottom: spacing.xs }]}>
         <Text variant="h5" style={[layout.flex1, margins.mrSm]}>{item.name}</Text>
-        {item.price && (
+        {item.price !== undefined && (
           <Text variant="body" color="primary" weight="semiBold">
             ${item.price}
           </Text>
@@ -120,9 +120,9 @@ export default function HomeScreen({ navigation }: Props) {
   );
 
   return (
-    <View style={layout.container}>
+    <SafeAreaView style={layout.container}>
       {/* Header */}
-      <View style={[layout.rowBetween, paddings.pxBase, paddings.pyMd, borderStyles.borderBottom, { backgroundColor: colors.white }]}>
+      <View style={[layout.rowBetween, paddings.pxBase, paddings.pyMd, borderStyles.borderBottom, { backgroundColor: colors.white, paddingTop: spacing.lg }]}>
         <Text variant="h3">My Items</Text>
         <Button
           title="+ Add New"
@@ -148,6 +148,6 @@ export default function HomeScreen({ navigation }: Props) {
         }
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </SafeAreaView>
   );
 }

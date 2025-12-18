@@ -2,7 +2,7 @@ import { Item } from '../services/api';
 
 export type RootStackParamList = {
   Home: undefined;
-  Details: { id: number };
+  Details: { id: string };
   Profile: { username: string };
   Create: undefined;
   Edit: { item: Item };
