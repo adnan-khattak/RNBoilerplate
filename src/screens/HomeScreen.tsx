@@ -1,116 +1,153 @@
-import { View, ScrollView } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, FlatList, Alert, RefreshControl, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/types';
-
-// Import reusable components
-import { Button, Text, Input } from '../components';
-
-// Import theme and styles
-import { layout, margins, cardStyles, common } from '../theme';
+import { Button, Text } from '../components';
+import { getItems, deleteItem, Item } from '../services/api';
 import { colors, spacing } from '../theme/theme';
+import { layout, margins, paddings, cardStyles, borderStyles } from '../theme/styles';
+import { RootStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: Props) {
-  return (
-    <ScrollView style={layout.container} contentContainerStyle={common.scrollContent}>
-      {/* Header Section */}
-      <View style={margins.mbXl}>
-        <Text variant="h2">Welcome Home</Text>
-        <Text variant="body" color="muted" style={margins.mtSm}>
-          This is a demo of the StyleSheet boilerplate
-        </Text>
-      </View>
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-      {/* Card Example */}
-      <View style={[cardStyles.base, margins.mbLg]}>
-        <Text variant="h5" style={margins.mbSm}>Card Example</Text>
-        <Text variant="bodySmall" color="muted">
-          Using centralized card styles with shadow
-        </Text>
-      </View>
+  const fetchItems = useCallback(async () => {
+    try {
+      const data = await getItems();
+      setItems(data);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to load items');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
-      {/* Input Examples */}
-      <View style={margins.mbLg}>
-        <Text variant="h5" style={margins.mbMd}>Input Components</Text>
-        <Input 
-          label="Email" 
-          placeholder="Enter your email"
-          keyboardType="email-address"
-        />
-        <Input 
-          label="Password" 
-          placeholder="Enter your password"
-          secureTextEntry
-        />
-      </View>
+  useEffect(() => {
+    fetchItems();
+  }, [fetchItems]);
 
-      {/* Button Examples */}
-      <View style={margins.mbLg}>
-        <Text variant="h5" style={margins.mbMd}>Button Variants</Text>
-        
+  // Refresh when screen is focused
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchItems();
+    });
+    return unsubscribe;
+  }, [navigation, fetchItems]);
+
+  const handleDelete = (item: Item) => {
+    Alert.alert(
+      'Delete Item',
+      `Are you sure you want to delete "${item.name}"?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteItem(item.id);
+              fetchItems();
+            } catch (error) {
+              Alert.alert('Error', 'Failed to delete item');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchItems();
+  };
+
+  const renderItem = ({ item }: { item: Item }) => (
+    <TouchableOpacity
+      style={[cardStyles.base, margins.mbMd]}
+      activeOpacity={0.7}
+      onPress={() => navigation.navigate('Detail', { item })}
+    >
+      <View style={[layout.rowBetween, { alignItems: 'flex-start', marginBottom: spacing.xs }]}>
+        <Text variant="h5" style={[layout.flex1, margins.mrSm]}>{item.name}</Text>
+        {item.price && (
+          <Text variant="body" color="primary" weight="semiBold">
+            ${item.price}
+          </Text>
+        )}
+      </View>
+      
+      <Text variant="bodySmall" color="muted" numberOfLines={2} style={margins.mbMd}>
+        {item.description}
+      </Text>
+
+      <View style={[layout.row, { gap: spacing.sm }]}>
         <Button
-          title="Go to Details"
-          variant="primary"
-          fullWidth
-          onPress={() => navigation.navigate('Details', { id: 1 })}
-          style={margins.mbSm}
-        />
-        
-        <Button
-          title="Secondary Button"
-          variant="secondary"
-          fullWidth
-          onPress={() => {}}
-          style={margins.mbSm}
-        />
-        
-        <Button
-          title="Outline Button"
+          title="View"
           variant="outline"
-          fullWidth
-          onPress={() => {}}
-          style={margins.mbSm}
+          size="small"
+          onPress={() => navigation.navigate('Detail', { item })}
+          style={layout.flex1}
         />
-        
         <Button
-          title="Ghost Button"
-          variant="ghost"
-          fullWidth
-          onPress={() => {}}
+          title="Edit"
+          variant="secondary"
+          size="small"
+          onPress={() => navigation.navigate('Edit', { item })}
+          style={layout.flex1}
+        />
+        <Button
+          title="Delete"
+          variant="danger"
+          size="small"
+          onPress={() => handleDelete(item)}
+          style={layout.flex1}
+        />
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderEmpty = () => (
+    <View style={[layout.flex1, layout.center, { paddingVertical: spacing['4xl'] }]}>
+      <Text variant="h4" color="muted" align="center">No Items Yet</Text>
+      <Text variant="body" color="muted" align="center" style={margins.mtSm}>
+        Tap the button above to add your first item
+      </Text>
+    </View>
+  );
+
+  return (
+    <View style={layout.container}>
+      {/* Header */}
+      <View style={[layout.rowBetween, paddings.pxBase, paddings.pyMd, borderStyles.borderBottom, { backgroundColor: colors.white }]}>
+        <Text variant="h3">My Items</Text>
+        <Button
+          title="+ Add New"
+          variant="primary"
+          size="small"
+          onPress={() => navigation.navigate('Create')}
         />
       </View>
 
-      {/* Typography Examples */}
-      <View style={margins.mbLg}>
-        <Text variant="h5" style={margins.mbMd}>Typography</Text>
-        <Text variant="h1">Heading 1</Text>
-        <Text variant="h2">Heading 2</Text>
-        <Text variant="h3">Heading 3</Text>
-        <Text variant="body">Body text - regular paragraph text</Text>
-        <Text variant="bodySmall" color="muted">Small muted text</Text>
-        <Text variant="caption">Caption text</Text>
-      </View>
-
-      {/* Color Examples */}
-      <View style={margins.mbLg}>
-        <Text variant="h5" style={margins.mbMd}>Text Colors</Text>
-        <Text color="primary">Primary Color</Text>
-        <Text color="secondary">Secondary Color</Text>
-        <Text color="success">Success Color</Text>
-        <Text color="error">Error Color</Text>
-        <Text color="warning">Warning Color</Text>
-      </View>
-
-      {/* Button Sizes */}
-      <View style={margins.mb2xl}>
-        <Text variant="h5" style={margins.mbMd}>Button Sizes</Text>
-        <View style={[layout.rowCenter, { gap: spacing.sm }]}>
-          <Button title="Small" size="small" onPress={() => {}} />
-          <Button title="Medium" size="medium" onPress={() => {}} />
-          <Button title="Large" size="large" onPress={() => {}} />
-        </View>
-      </View>
-    </ScrollView>
+      {/* Items List */}
+      <FlatList
+        data={items}
+        keyExtractor={item => item.id.toString()}
+        renderItem={renderItem}
+        contentContainerStyle={[paddings.pBase, paddings.pb2xl, { flexGrow: 1 }]}
+        ListEmptyComponent={!loading ? renderEmpty : null}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
   );
 }
