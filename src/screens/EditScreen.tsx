@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  ScrollView,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { Button, Text, Input } from '../components';
-import { updateItem } from '../services/api';
+import { updateItem, Item } from '../services/api';
 import { spacing } from '../theme/theme';
 import { layout, margins, paddings } from '../theme/styles';
 import { RootStackParamList } from '../navigation/types';
@@ -11,13 +19,29 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Edit'>;
 
 export default function EditScreen({ navigation, route }: Props) {
   const { item } = route.params;
-  
+  const queryClient = useQueryClient();
+
+  /* ------------------ FORM STATE ------------------ */
   const [name, setName] = useState(item.name);
   const [description, setDescription] = useState(item.description);
   const [price, setPrice] = useState(item.price?.toString() || '');
-  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
 
+  /* ------------------ UPDATE MUTATION ------------------ */
+  const updateMutation = useMutation({
+    mutationFn: (data: Partial<Item>) => updateItem(item.id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['items'] });
+      Alert.alert('Success', 'Item updated successfully', [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
+    },
+    onError: () => {
+      Alert.alert('Error', 'Failed to update item');
+    },
+  });
+
+  /* ------------------ VALIDATION ------------------ */
   const validate = (): boolean => {
     const newErrors: { name?: string; description?: string } = {};
 
@@ -37,24 +61,15 @@ export default function EditScreen({ navigation, route }: Props) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
+  /* ------------------ SUBMIT ------------------ */
+  const handleSubmit = () => {
     if (!validate()) return;
 
-    setLoading(true);
-    try {
-      await updateItem(item.id, {
-        name: name.trim(),
-        description: description.trim(),
-        price: price ? parseFloat(price) : undefined,
-      });
-      Alert.alert('Success', 'Item updated successfully', [
-        { text: 'OK', onPress: () => navigation.goBack() },
-      ]);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to update item');
-    } finally {
-      setLoading(false);
-    }
+    updateMutation.mutate({
+      name: name.trim(),
+      description: description.trim(),
+      price: price ? parseFloat(price) : undefined,
+    });
   };
 
   const hasChanges = () => {
@@ -87,7 +102,6 @@ export default function EditScreen({ navigation, route }: Props) {
         <View style={margins.mbXl}>
           <Input
             label="Name"
-            placeholder="Enter item name"
             value={name}
             onChangeText={setName}
             error={errors.name}
@@ -96,7 +110,6 @@ export default function EditScreen({ navigation, route }: Props) {
 
           <Input
             label="Description"
-            placeholder="Enter item description"
             value={description}
             onChangeText={setDescription}
             error={errors.description}
@@ -106,7 +119,6 @@ export default function EditScreen({ navigation, route }: Props) {
 
           <Input
             label="Price (Optional)"
-            placeholder="Enter price"
             value={price}
             onChangeText={setPrice}
             keyboardType="decimal-pad"
@@ -118,9 +130,8 @@ export default function EditScreen({ navigation, route }: Props) {
         <View style={margins.mtLg}>
           <Button
             title="Save Changes"
-            variant="primary"
             fullWidth
-            loading={loading}
+            loading={updateMutation.isPending}
             disabled={!hasChanges()}
             onPress={handleSubmit}
             style={margins.mbMd}
@@ -130,7 +141,7 @@ export default function EditScreen({ navigation, route }: Props) {
             variant="ghost"
             fullWidth
             onPress={() => navigation.goBack()}
-            disabled={loading}
+            disabled={updateMutation.isPending}
           />
         </View>
       </ScrollView>

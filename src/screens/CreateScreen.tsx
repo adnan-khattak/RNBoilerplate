@@ -1,21 +1,45 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  ScrollView,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { Button, Text, Input } from '../components';
-import { createItem } from '../services/api';
-import { spacing } from '../theme/theme';
+import { createItem, Item } from '../services/api';
 import { layout, margins, paddings } from '../theme/styles';
 import { RootStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Create'>;
 
 export default function CreateScreen({ navigation }: Props) {
+  const queryClient = useQueryClient();
+
+  /* ------------------ FORM STATE ------------------ */
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
 
+  /* ------------------ CREATE MUTATION ------------------ */
+  const createMutation = useMutation({
+    mutationFn: createItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['items'] });
+      Alert.alert('Success', 'Item created successfully', [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
+    },
+    onError: () => {
+      Alert.alert('Error', 'Failed to create item');
+    },
+  });
+
+  /* ------------------ VALIDATION ------------------ */
   const validate = (): boolean => {
     const newErrors: { name?: string; description?: string } = {};
 
@@ -35,24 +59,15 @@ export default function CreateScreen({ navigation }: Props) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
+  /* ------------------ SUBMIT ------------------ */
+  const handleSubmit = () => {
     if (!validate()) return;
 
-    setLoading(true);
-    try {
-      await createItem({
-        name: name.trim(),
-        description: description.trim(),
-        price: price ? parseFloat(price) : undefined,
-      });
-      Alert.alert('Success', 'Item created successfully', [
-        { text: 'OK', onPress: () => navigation.goBack() },
-      ]);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to create item');
-    } finally {
-      setLoading(false);
-    }
+    createMutation.mutate({
+      name: name.trim(),
+      description: description.trim(),
+      price: price ? parseFloat(price) : undefined,
+    });
   };
 
   return (
@@ -77,7 +92,6 @@ export default function CreateScreen({ navigation }: Props) {
         <View style={margins.mbXl}>
           <Input
             label="Name"
-            placeholder="Enter item name"
             value={name}
             onChangeText={setName}
             error={errors.name}
@@ -87,7 +101,6 @@ export default function CreateScreen({ navigation }: Props) {
 
           <Input
             label="Description"
-            placeholder="Enter item description"
             value={description}
             onChangeText={setDescription}
             error={errors.description}
@@ -97,7 +110,6 @@ export default function CreateScreen({ navigation }: Props) {
 
           <Input
             label="Price (Optional)"
-            placeholder="Enter price"
             value={price}
             onChangeText={setPrice}
             keyboardType="decimal-pad"
@@ -109,9 +121,8 @@ export default function CreateScreen({ navigation }: Props) {
         <View style={margins.mtLg}>
           <Button
             title="Create Item"
-            variant="primary"
             fullWidth
-            loading={loading}
+            loading={createMutation.isPending}
             onPress={handleSubmit}
             style={margins.mbMd}
           />
@@ -120,7 +131,7 @@ export default function CreateScreen({ navigation }: Props) {
             variant="ghost"
             fullWidth
             onPress={() => navigation.goBack()}
-            disabled={loading}
+            disabled={createMutation.isPending}
           />
         </View>
       </ScrollView>

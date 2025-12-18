@@ -1,10 +1,18 @@
 import React from 'react';
 import { View, ScrollView, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { Button, Text } from '../components';
-import { deleteItem } from '../services/api';
+import { deleteItem, Item } from '../services/api';
 import { colors, spacing, borderRadius } from '../theme/theme';
-import { layout, margins, paddings, cardStyles, dividerStyles } from '../theme/styles';
+import {
+  layout,
+  margins,
+  paddings,
+  cardStyles,
+  dividerStyles,
+} from '../theme/styles';
 import { RootStackParamList } from '../navigation/types';
 import { formatDate, formatCurrency } from '../utils/helpers';
 
@@ -12,6 +20,19 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
 export default function DetailScreen({ navigation, route }: Props) {
   const { item } = route.params;
+  const queryClient = useQueryClient();
+
+  /* ------------------ DELETE MUTATION ------------------ */
+  const deleteMutation = useMutation({
+    mutationFn: deleteItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['items'] });
+      navigation.goBack();
+    },
+    onError: () => {
+      Alert.alert('Error', 'Failed to delete item');
+    },
+  });
 
   const handleEdit = () => {
     navigation.navigate('Edit', { item });
@@ -26,28 +47,36 @@ export default function DetailScreen({ navigation, route }: Props) {
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteItem(item.id);
-              navigation.goBack();
-            } catch (error) {
-              Alert.alert('Error', 'Failed to delete item');
-            }
-          },
+          onPress: () => deleteMutation.mutate(item.id),
         },
       ]
     );
   };
 
   return (
-    <ScrollView style={layout.container} contentContainerStyle={[paddings.pBase, paddings.pb2xl]}>
+    <ScrollView
+      style={layout.container}
+      contentContainerStyle={[paddings.pBase, paddings.pb2xl]}
+    >
       {/* Main Card */}
       <View style={cardStyles.elevated}>
-        {/* Header with Name and Price */}
+        {/* Header */}
         <View style={layout.rowBetween}>
-          <Text variant="h2" style={[layout.flex1, margins.mrMd]}>{item.name}</Text>
+          <Text variant="h2" style={[layout.flex1, margins.mrMd]}>
+            {item.name}
+          </Text>
+
           {item.price !== undefined && (
-            <View style={[paddings.pxMd, paddings.pySm, { backgroundColor: colors.primary, borderRadius: borderRadius.md }]}>
+            <View
+              style={[
+                paddings.pxMd,
+                paddings.pySm,
+                {
+                  backgroundColor: colors.primary,
+                  borderRadius: borderRadius.md,
+                },
+              ]}
+            >
               <Text variant="h4" color="white">
                 {formatCurrency(item.price)}
               </Text>
@@ -55,7 +84,6 @@ export default function DetailScreen({ navigation, route }: Props) {
           )}
         </View>
 
-        {/* Divider */}
         <View style={[dividerStyles.horizontal, margins.myLg]} />
 
         {/* Description */}
@@ -67,17 +95,38 @@ export default function DetailScreen({ navigation, route }: Props) {
         </View>
 
         {/* Metadata */}
-        <View style={[paddings.pMd, { backgroundColor: colors.backgroundSecondary, borderRadius: borderRadius.md, gap: spacing.sm }]}>
+        <View
+          style={[
+            paddings.pMd,
+            {
+              backgroundColor: colors.backgroundSecondary,
+              borderRadius: borderRadius.md,
+              gap: spacing.sm,
+            },
+          ]}
+        >
           <View style={layout.rowBetween}>
-            <Text variant="caption" color="muted">Created</Text>
-            <Text variant="bodySmall">{formatDate(item.createdAt)}</Text>
+            <Text variant="caption" color="muted">
+              Created
+            </Text>
+            <Text variant="bodySmall">
+              {formatDate(item.createdAt)}
+            </Text>
           </View>
+
           <View style={layout.rowBetween}>
-            <Text variant="caption" color="muted">Last Updated</Text>
-            <Text variant="bodySmall">{formatDate(item.updatedAt)}</Text>
+            <Text variant="caption" color="muted">
+              Last Updated
+            </Text>
+            <Text variant="bodySmall">
+              {formatDate(item.updatedAt)}
+            </Text>
           </View>
+
           <View style={layout.rowBetween}>
-            <Text variant="caption" color="muted">Item ID</Text>
+            <Text variant="caption" color="muted">
+              Item ID
+            </Text>
             <Text variant="bodySmall">#{item.id}</Text>
           </View>
         </View>
@@ -87,7 +136,6 @@ export default function DetailScreen({ navigation, route }: Props) {
       <View style={margins.mtXl}>
         <Button
           title="Edit Item"
-          variant="primary"
           fullWidth
           onPress={handleEdit}
           style={margins.mbMd}
@@ -96,6 +144,7 @@ export default function DetailScreen({ navigation, route }: Props) {
           title="Delete Item"
           variant="danger"
           fullWidth
+          loading={deleteMutation.isPending}
           onPress={handleDelete}
           style={margins.mbMd}
         />
