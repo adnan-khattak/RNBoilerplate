@@ -1,11 +1,12 @@
 # React Native CRUD Boilerplate
 
-A production-ready React Native boilerplate with CRUD operations, featuring TypeScript, React Navigation, React Query, and a comprehensive theming system.
+A production-ready React Native boilerplate with **Authentication** and CRUD operations, featuring TypeScript, React Navigation, React Query, and a comprehensive theming system.
 
 ## ✨ Features
 
+- **🔐 Authentication** - Complete auth flow (SignIn/SignUp) with MockAPI
 - **TypeScript** - Type-safe development
-- **React Navigation v7** - Native stack navigation with typed routes
+- **React Navigation v7** - Native stack navigation with typed routes & auth guards
 - **React Query (TanStack Query)** - Powerful data fetching & caching
 - **Context + Reducer** - Lightweight global state management
 - **Theming System** - Design tokens (colors, spacing, typography)
@@ -30,25 +31,33 @@ src/
 ├── config/          # App configuration & constants
 │   └── constants.ts
 ├── navigation/      # Navigation setup & types
-│   ├── RootNavigator.tsx
-│   └── types.ts
+│   ├── RootNavigator.tsx  # Auth-aware navigator
+│   └── types.ts           # AuthStack & AppStack types
 ├── screens/         # Screen components
+│   ├── SignInScreen.tsx   # 🔐 Auth
+│   ├── SignUpScreen.tsx   # 🔐 Auth
+│   ├── HomeScreen.tsx
 │   ├── CreateScreen.tsx
 │   ├── DetailScreen.tsx
 │   ├── EditScreen.tsx
-│   ├── HomeScreen.tsx
-│   └── ProfileScreen.tsx
+│   └── ProfileScreen.tsx  # User profile & logout
 ├── services/        # API calls & hooks
-│   ├── api.ts       # Raw API functions
-│   ├── hooks.ts     # React Query hooks
+│   ├── api.ts           # CRUD API functions
+│   ├── authApi.ts       # 🔐 Auth API (login, register)
+│   ├── authStorage.ts   # 🔐 Token/user persistence
+│   ├── authHooks.ts     # 🔐 React Query auth hooks
+│   ├── hooks.ts         # CRUD React Query hooks
 │   └── index.ts
 ├── state/           # Global state (Context + Reducer)
+│   ├── AuthContext.tsx   # 🔐 Auth provider & useAuth hook
+│   ├── authReducer.ts    # 🔐 Auth state reducer
+│   ├── authTypes.ts      # 🔐 User, AuthState types
 │   ├── AppContext.tsx
 │   ├── appReducer.ts
 │   └── appTypes.ts
 ├── theme/           # Design tokens & styles
-│   ├── theme.ts     # Colors, spacing, typography
-│   ├── styles.ts    # Reusable StyleSheet styles
+│   ├── theme.ts
+│   ├── styles.ts
 │   └── index.ts
 └── utils/           # Helper functions
     └── helpers.ts
@@ -133,6 +142,53 @@ import { Button, Text, Input, Card, Loading, EmptyState } from '@components';
   onAction={() => navigation.navigate('Create')}
 />
 ```
+
+## 🔐 Authentication
+
+The boilerplate includes a complete auth flow using MockAPI.
+
+### Using Auth Context
+
+```tsx
+import { useAuth } from '@state/AuthContext';
+
+function MyComponent() {
+  const { authState, signIn, signUp, signOut } = useAuth();
+
+  // Check auth status
+  if (authState.status === 'authenticated') {
+    console.log('User:', authState.user);
+  }
+
+  // Sign in
+  await signIn({ email: 'user@example.com', password: 'password123' });
+
+  // Sign up
+  await signUp({ name: 'John', email: 'john@example.com', password: 'password123' });
+
+  // Sign out
+  await signOut();
+}
+```
+
+### MockAPI Setup for Auth
+
+Create a `users` endpoint in MockAPI with these fields:
+- `id` (string)
+- `email` (string)
+- `name` (string)
+- `password` (string)
+- `avatar` (string, optional)
+- `createdAt` (string)
+
+### Customizing Auth for Your Backend
+
+1. **Update API endpoints** in `src/services/authApi.ts`
+2. **Modify User type** in `src/state/authTypes.ts`
+3. **Enable persistent storage** - Uncomment AsyncStorage in `src/services/authStorage.ts`:
+   ```bash
+   npm install @react-native-async-storage/async-storage
+   ```
 
 ## 🔌 Using API Hooks
 

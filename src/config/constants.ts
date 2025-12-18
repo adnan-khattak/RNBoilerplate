@@ -5,7 +5,7 @@
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: process.env.API_BASE_URL || 'https://6943ce467dd335f4c35e2feb.mockapi.io/api/v1',
+  BASE_URL: 'https://6943ce467dd335f4c35e2feb.mockapi.io/api/v1',
   TIMEOUT: 30000,
   RETRY_ATTEMPTS: 3,
 } as const;

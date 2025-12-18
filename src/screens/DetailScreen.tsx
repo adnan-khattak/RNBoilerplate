@@ -56,7 +56,7 @@ export default function DetailScreen({ navigation, route }: Props) {
   return (
     <ScrollView
       style={layout.container}
-      contentContainerStyle={[paddings.pBase, paddings.pb2xl]}
+      contentContainerStyle={[paddings.pBase, { paddingBottom: 32 }]}
     >
       {/* Main Card */}
       <View style={cardStyles.elevated}>

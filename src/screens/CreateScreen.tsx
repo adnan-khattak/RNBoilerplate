@@ -77,7 +77,7 @@ export default function CreateScreen({ navigation }: Props) {
     >
       <ScrollView
         style={layout.container}
-        contentContainerStyle={[paddings.pBase, paddings.pb2xl]}
+        contentContainerStyle={[paddings.pBase, { paddingBottom: 32 }]}
         keyboardShouldPersistTaps="handled"
       >
         {/* Header */}

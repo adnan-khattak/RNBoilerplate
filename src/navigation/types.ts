@@ -1,10 +1,27 @@
 import { Item } from '../services/api';
 
-export type RootStackParamList = {
+/**
+ * Navigation Types
+ * 
+ * CUSTOMIZATION: Add your own screen params here
+ */
+
+// Auth Stack - Screens shown when user is NOT authenticated
+export type AuthStackParamList = {
+  SignIn: undefined;
+  SignUp: undefined;
+  ForgotPassword?: undefined; // Optional: Add if needed
+};
+
+// App Stack - Screens shown when user IS authenticated
+export type AppStackParamList = {
   Home: undefined;
-  Details: { id: string };
-  Profile: { username: string };
+  Detail: { item: Item };
   Create: undefined;
   Edit: { item: Item };
-  Detail: { item: Item };
+  Profile: undefined;
 };
+
+// Combined type for useNavigation hook typing
+export type RootStackParamList = AuthStackParamList & AppStackParamList;
+

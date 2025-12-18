@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, Alert, RefreshControl, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, FlatList, Alert, RefreshControl, TouchableOpacity, Image } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Text } from '../components';
 import { getItems, deleteItem, Item } from '../services/api';
+import { useAuth } from '../state/AuthContext';
 import { colors, spacing } from '../theme/theme';
 import { layout, margins, paddings, cardStyles, borderStyles } from '../theme/styles';
-import { RootStackParamList } from '../navigation/types';
+import { AppStackParamList } from '../navigation/types';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: Props) {
   const [items, setItems] = useState<Item[]>([]);
@@ -119,11 +121,30 @@ export default function HomeScreen({ navigation }: Props) {
     </View>
   );
 
+  const { authState } = useAuth();
+  const user = authState.user;
+
   return (
     <SafeAreaView style={layout.container}>
       {/* Header */}
       <View style={[layout.rowBetween, paddings.pxBase, paddings.pyMd, borderStyles.borderBottom, { backgroundColor: colors.white, paddingTop: spacing.lg }]}>
-        <Text variant="h3">My Items</Text>
+        <View style={layout.rowCenter}>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={margins.mrMd}>
+            {user?.avatar ? (
+              <Image
+                source={{ uri: user.avatar }}
+                style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: colors.gray[200] }}
+              />
+            ) : (
+              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}>
+                <Text variant="body" color="white" weight="semiBold">
+                  {user?.name?.charAt(0)?.toUpperCase() || '?'}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+          <Text variant="h3">My Items</Text>
+        </View>
         <Button
           title="+ Add New"
           variant="primary"
@@ -137,7 +158,7 @@ export default function HomeScreen({ navigation }: Props) {
         data={items}
         keyExtractor={item => item.id.toString()}
         renderItem={renderItem}
-        contentContainerStyle={[paddings.pBase, paddings.pb2xl, { flexGrow: 1 }]}
+        contentContainerStyle={[paddings.pBase, paddings.p2xl, { flexGrow: 1 }]}
         ListEmptyComponent={!loading ? renderEmpty : null}
         refreshControl={
           <RefreshControl
