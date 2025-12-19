@@ -6,7 +6,7 @@
  *   const { authState, signIn, signOut, signUp } = useAuth();
  */
 
-import React, { createContext, useReducer, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useReducer, useContext, useEffect, useCallback, useMemo} from 'react';
 import { authReducer, authInitialState } from './authReducer';
 import { AuthState, LoginRequest, RegisterRequest } from './authTypes';
 import { authStorage } from '@services/authStorage';
@@ -72,9 +72,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       dispatch({ type: 'AUTH_LOGOUT' });
     }
   }, []);
-
+const value = useMemo(
+  () => ({ authState, signIn, signUp, signOut }),
+  [authState, signIn, signUp, signOut]
+)
   return (
-    <AuthContext.Provider value={{ authState, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
