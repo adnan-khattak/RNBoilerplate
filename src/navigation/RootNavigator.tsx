@@ -1,12 +1,12 @@
 /**
  * Root Navigator
  * Handles authentication flow - shows Auth screens or App screens based on auth state
- * 
+ *
  * CUSTOMIZATION:
  * - Add more screens to AuthStack or AppStack as needed
  * - Modify screen options for custom headers
  */
-
+import React, { Suspense } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View } from 'react-native';
@@ -21,10 +21,10 @@ import SignUpScreen from '@screens/SignUpScreen';
 
 // App Screens
 import HomeScreen from '@screens/HomeScreen';
-import ProfileScreen from '@screens/ProfileScreen';
-import CreateScreen from '@screens/CreateScreen';
-import EditScreen from '@screens/EditScreen';
-import DetailScreen from '@screens/DetailScreen';
+const ProfileScreen = React.lazy(() => import('@screens/ProfileScreen'));
+const CreateScreen = React.lazy(() => import('@screens/CreateScreen'));
+const EditScreen = React.lazy(() => import('@screens/EditScreen'));
+const DetailScreen = React.lazy(() => import('@screens/DetailScreen'));
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const AppStack = createNativeStackNavigator<AppStackParamList>();
@@ -65,35 +65,44 @@ function AuthNavigator() {
  */
 function AppNavigator() {
   return (
-    <AppStack.Navigator
-      initialRouteName="Home"
-      screenOptions={screenOptions}
-    >
-      <AppStack.Screen 
-        name="Home" 
+    <AppStack.Navigator initialRouteName="Home" screenOptions={screenOptions}>
+      <AppStack.Screen
+        name="Home"
         component={HomeScreen}
         options={{ headerShown: false }}
       />
-      <AppStack.Screen 
-        name="Profile" 
-        component={ProfileScreen}
+      <AppStack.Screen
+        name="Profile"
         options={{ title: STRINGS.PROFILE.TITLE }}
-      />
-      <AppStack.Screen 
-        name="Create" 
-        component={CreateScreen}
-        options={{ title: STRINGS.CREATE.TITLE }}
-      />
-      <AppStack.Screen 
-        name="Edit" 
-        component={EditScreen}
-        options={{ title: STRINGS.EDIT.TITLE }}
-      />
-      <AppStack.Screen 
-        name="Detail" 
-        component={DetailScreen}
-        options={{ title: STRINGS.DETAIL.TITLE }}
-      />
+      >
+        {props => (
+          <Suspense fallback={<LoadingScreen />}>
+            <ProfileScreen {...props} />
+          </Suspense>
+        )}
+      </AppStack.Screen>
+
+      <AppStack.Screen name="Create" options={{ title: STRINGS.CREATE.TITLE }}>
+        {props => (
+          <Suspense fallback={<LoadingScreen />}>
+            <CreateScreen {...props} />
+          </Suspense>
+        )}
+      </AppStack.Screen>
+      <AppStack.Screen name="Edit" options={{ title: STRINGS.EDIT.TITLE }}>
+        {props => (
+          <Suspense fallback={<LoadingScreen />}>
+            <EditScreen {...props} />
+          </Suspense>
+        )}
+      </AppStack.Screen>
+      <AppStack.Screen name="Detail" options={{ title: STRINGS.DETAIL.TITLE }}>
+        {props => (
+          <Suspense fallback={<LoadingScreen />}>
+            <DetailScreen {...props} />
+          </Suspense>
+        )}
+      </AppStack.Screen>
     </AppStack.Navigator>
   );
 }
@@ -103,7 +112,14 @@ function AppNavigator() {
  */
 function LoadingScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.background }}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: COLORS.background,
+      }}
+    >
       <ActivityIndicator size="large" color={COLORS.primary} />
     </View>
   );
@@ -122,7 +138,11 @@ export default function RootNavigator() {
 
   return (
     <NavigationContainer>
-      {authState.status === 'authenticated' ? <AppNavigator /> : <AuthNavigator />}
+      {authState.status === 'authenticated' ? (
+        <AppNavigator />
+      ) : (
+        <AuthNavigator />
+      )}
     </NavigationContainer>
   );
 }
