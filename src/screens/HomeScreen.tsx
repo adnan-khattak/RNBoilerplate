@@ -5,7 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Text } from '../components';
 import { getItems, deleteItem, Item } from '../services/api';
 import { useAuth } from '../state/AuthContext';
-import { colors, spacing } from '../theme/theme';
+import { COLORS } from '../config/colors';
+import { STRINGS } from '../config/strings';
+import { spacing } from '../theme/theme';
 import { layout, margins, paddings, cardStyles, borderStyles } from '../theme/styles';
 import { AppStackParamList } from '../navigation/types';
 
@@ -20,8 +22,8 @@ export default function HomeScreen({ navigation }: Props) {
     try {
       const data = await getItems();
       setItems(data);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to load items');
+    } catch {
+      Alert.alert(STRINGS.ALERTS.ERROR, STRINGS.ERRORS.LOAD_ITEMS);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -42,19 +44,19 @@ export default function HomeScreen({ navigation }: Props) {
 
   const handleDelete = (item: Item) => {
     Alert.alert(
-      'Delete Item',
-      `Are you sure you want to delete "${item.name}"?`,
+      STRINGS.HOME.DELETE_TITLE,
+      STRINGS.HOME.DELETE_MESSAGE(item.name),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: STRINGS.COMMON.CANCEL, style: 'cancel' },
         {
-          text: 'Delete',
+          text: STRINGS.COMMON.DELETE,
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteItem(item.id);
               fetchItems();
-            } catch (error) {
-              Alert.alert('Error', 'Failed to delete item');
+            } catch {
+              Alert.alert(STRINGS.ALERTS.ERROR, STRINGS.ERRORS.DELETE_ITEM);
             }
           },
         },
@@ -88,21 +90,21 @@ export default function HomeScreen({ navigation }: Props) {
 
       <View style={[layout.row, { gap: spacing.sm }]}>
         <Button
-          title="View"
+          title={STRINGS.HOME.VIEW}
           variant="outline"
           size="small"
           onPress={() => navigation.navigate('Detail', { item })}
           style={layout.flex1}
         />
         <Button
-          title="Edit"
+          title={STRINGS.COMMON.EDIT}
           variant="secondary"
           size="small"
           onPress={() => navigation.navigate('Edit', { item })}
           style={layout.flex1}
         />
         <Button
-          title="Delete"
+          title={STRINGS.COMMON.DELETE}
           variant="danger"
           size="small"
           onPress={() => handleDelete(item)}
@@ -114,9 +116,9 @@ export default function HomeScreen({ navigation }: Props) {
 
   const renderEmpty = () => (
     <View style={[layout.flex1, layout.center, { paddingVertical: spacing['4xl'] }]}>
-      <Text variant="h4" color="muted" align="center">No Items Yet</Text>
+      <Text variant="h4" color="muted" align="center">{STRINGS.HOME.NO_ITEMS_TITLE}</Text>
       <Text variant="body" color="muted" align="center" style={margins.mtSm}>
-        Tap the button above to add your first item
+        {STRINGS.HOME.NO_ITEMS_DESCRIPTION}
       </Text>
     </View>
   );
@@ -127,26 +129,26 @@ export default function HomeScreen({ navigation }: Props) {
   return (
     <SafeAreaView style={layout.container}>
       {/* Header */}
-      <View style={[layout.rowBetween, paddings.pxBase, paddings.pyMd, borderStyles.borderBottom, { backgroundColor: colors.white, paddingTop: spacing.lg }]}>
+      <View style={[layout.rowBetween, paddings.pxBase, paddings.pyMd, borderStyles.borderBottom, { backgroundColor: COLORS.white, paddingTop: spacing.lg }]}>
         <View style={layout.rowCenter}>
           <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={margins.mrMd}>
             {user?.avatar ? (
               <Image
                 source={{ uri: user.avatar }}
-                style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: colors.gray[200] }}
+                style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: COLORS.gray200 }}
               />
             ) : (
-              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}>
+              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: COLORS.primary, justifyContent: 'center', alignItems: 'center' }}>
                 <Text variant="body" color="white" weight="semiBold">
                   {user?.name?.charAt(0)?.toUpperCase() || '?'}
                 </Text>
               </View>
             )}
           </TouchableOpacity>
-          <Text variant="h3">My Items</Text>
+          <Text variant="h3">{STRINGS.HOME.TITLE}</Text>
         </View>
         <Button
-          title="+ Add New"
+          title={STRINGS.HOME.ADD_NEW}
           variant="primary"
           size="small"
           onPress={() => navigation.navigate('Create')}
@@ -164,7 +166,7 @@ export default function HomeScreen({ navigation }: Props) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={colors.primary}
+            tintColor={COLORS.primary}
           />
         }
         showsVerticalScrollIndicator={false}

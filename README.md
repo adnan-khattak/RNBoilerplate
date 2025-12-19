@@ -29,7 +29,10 @@ src/
 │   ├── Text.tsx
 │   └── index.ts
 ├── config/          # App configuration & constants
-│   └── constants.ts
+│   ├── constants.ts     # API config & feature flags
+│   ├── strings.ts       # 🌐 All app text (easy i18n)
+│   ├── colors.ts        # 🎨 Global color palette
+│   └── index.ts
 ├── navigation/      # Navigation setup & types
 │   ├── RootNavigator.tsx  # Auth-aware navigator
 │   └── types.ts           # AuthStack & AppStack types
@@ -222,6 +225,79 @@ export const API_CONFIG = {
   BASE_URL: 'https://your-api.com/v1',
   // ...
 };
+```
+
+### 🎨 Customizing Colors
+
+All colors are centralized in `src/config/colors.ts`. Update them to match your brand:
+
+```ts
+// src/config/colors.ts
+export const COLORS = {
+  // Primary - Change to your brand color
+  primary: '#007AFF',        // Main buttons, links
+  primaryLight: '#4DA2FF',   // Hover states
+  primaryDark: '#0055B3',    // Pressed states
+
+  // Secondary
+  secondary: '#5856D6',
+
+  // Semantic
+  success: '#34C759',
+  warning: '#FF9500',
+  error: '#FF3B30',
+  info: '#5AC8FA',
+
+  // Backgrounds
+  background: '#F8F9FA',
+  card: '#FFFFFF',
+  
+  // Text
+  text: '#1C1C1E',
+  textSecondary: '#6B7280',
+  textMuted: '#9CA3AF',
+
+  // ...more colors
+};
+```
+
+### 🌐 Customizing Strings (i18n Ready)
+
+All app text is in `src/config/strings.ts`. Easy to translate or customize:
+
+```ts
+// src/config/strings.ts
+export const STRINGS = {
+  AUTH: {
+    SIGN_IN: 'Sign In',
+    SIGN_UP: 'Sign Up',
+    EMAIL_PLACEHOLDER: 'Enter your email',
+    PASSWORD_PLACEHOLDER: 'Enter your password',
+    // Add more...
+  },
+  HOME: {
+    TITLE: 'Items',
+    ADD_ITEM: 'Add Item',
+    SEARCH_PLACEHOLDER: 'Search items...',
+  },
+  PROFILE: {
+    TITLE: 'Profile',
+    LOGOUT: 'Logout',
+    LOGOUT_CONFIRM: 'Are you sure you want to logout?',
+  },
+  // ...more sections
+};
+```
+
+**Usage in components:**
+```tsx
+import { STRINGS, COLORS } from '@config';
+
+<Text style={{ color: COLORS.primary }}>{STRINGS.HOME.TITLE}</Text>
+<Button 
+  title={STRINGS.AUTH.SIGN_IN} 
+  color={COLORS.success} 
+/>
 ```
 
 ### Adding New Screens

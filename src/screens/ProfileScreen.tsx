@@ -9,24 +9,25 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Button, Text, Card } from '../components';
 import { useAuth } from '../state/AuthContext';
-import { colors, spacing, borderRadius } from '../theme/theme';
+import { COLORS } from '../config/colors';
+import { STRINGS } from '../config/strings';
 import { layout, margins, paddings } from '../theme/styles';
 import { AppStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Profile'>;
 
-export default function ProfileScreen({ navigation }: Props) {
+export default function ProfileScreen({}: Props) {
   const { authState, signOut } = useAuth();
   const { user } = authState;
 
   const handleLogout = () => {
     Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
+      STRINGS.AUTH.SIGN_OUT,
+      STRINGS.AUTH.SIGN_OUT_CONFIRM,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: STRINGS.COMMON.CANCEL, style: 'cancel' },
         {
-          text: 'Sign Out',
+          text: STRINGS.AUTH.SIGN_OUT,
           style: 'destructive',
           onPress: async () => {
             await signOut();
@@ -39,7 +40,7 @@ export default function ProfileScreen({ navigation }: Props) {
   if (!user) {
     return (
       <View style={[layout.container, layout.center]}>
-        <Text variant="body" color="muted">No user data</Text>
+        <Text variant="body" color="muted">{STRINGS.COMMON.NO_RESULTS}</Text>
       </View>
     );
   }
@@ -58,7 +59,7 @@ export default function ProfileScreen({ navigation }: Props) {
               width: 100,
               height: 100,
               borderRadius: 50,
-              backgroundColor: colors.gray[200],
+              backgroundColor: COLORS.gray200,
             }}
           />
         ) : (
@@ -67,7 +68,7 @@ export default function ProfileScreen({ navigation }: Props) {
               width: 100,
               height: 100,
               borderRadius: 50,
-              backgroundColor: colors.primary,
+              backgroundColor: COLORS.primary,
               justifyContent: 'center',
               alignItems: 'center',
             }}
@@ -83,21 +84,21 @@ export default function ProfileScreen({ navigation }: Props) {
 
       {/* User Info Card */}
       <Card variant="outlined" style={margins.mbLg}>
-        <Text variant="label" color="muted" style={margins.mbSm}>Account Information</Text>
+        <Text variant="label" color="muted" style={margins.mbSm}>{STRINGS.PROFILE.ACCOUNT_INFO}</Text>
         
         <View style={[layout.rowBetween, margins.mbSm]}>
-          <Text variant="body" color="muted">User ID</Text>
+          <Text variant="body" color="muted">{STRINGS.PROFILE.USER_ID}</Text>
           <Text variant="body">{user.id}</Text>
         </View>
         
         <View style={[layout.rowBetween, margins.mbSm]}>
-          <Text variant="body" color="muted">Email</Text>
+          <Text variant="body" color="muted">{STRINGS.FORM.EMAIL}</Text>
           <Text variant="body">{user.email}</Text>
         </View>
         
         {user.createdAt && (
           <View style={layout.rowBetween}>
-            <Text variant="body" color="muted">Member Since</Text>
+            <Text variant="body" color="muted">{STRINGS.PROFILE.MEMBER_SINCE}</Text>
             <Text variant="body">
               {new Date(user.createdAt).toLocaleDateString()}
             </Text>
@@ -108,7 +109,7 @@ export default function ProfileScreen({ navigation }: Props) {
       {/* Actions */}
       <View style={margins.mtLg}>
         <Button
-          title="Sign Out"
+          title={STRINGS.AUTH.SIGN_OUT}
           variant="danger"
           fullWidth
           onPress={handleLogout}
@@ -116,9 +117,9 @@ export default function ProfileScreen({ navigation }: Props) {
       </View>
 
       {/* Customization hint */}
-      <View style={[margins.mtXl, paddings.pMd, { backgroundColor: colors.backgroundSecondary, borderRadius: borderRadius.md }]}>
+      <View style={[margins.mtXl, paddings.pMd, { backgroundColor: COLORS.backgroundSecondary, borderRadius: 12 }]}>
         <Text variant="caption" color="muted" align="center">
-          💡 Customize this screen to add edit profile, change password, settings, etc.
+          {STRINGS.PROFILE.CUSTOMIZE_HINT}
         </Text>
       </View>
     </ScrollView>

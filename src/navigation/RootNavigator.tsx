@@ -12,7 +12,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View } from 'react-native';
 
 import { useAuth } from '../state/AuthContext';
-import { colors } from '../theme/theme';
+import { COLORS } from '../config/colors';
+import { STRINGS } from '../config/strings';
 import { AuthStackParamList, AppStackParamList } from './types';
 
 // Auth Screens
@@ -32,14 +33,14 @@ const AppStack = createNativeStackNavigator<AppStackParamList>();
 // Shared screen options
 const screenOptions = {
   headerStyle: {
-    backgroundColor: colors.white,
+    backgroundColor: COLORS.white,
   },
-  headerTintColor: colors.primary,
+  headerTintColor: COLORS.primary,
   headerTitleStyle: {
     fontWeight: '600' as const,
   },
   contentStyle: {
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: COLORS.backgroundSecondary,
   },
 };
 
@@ -82,17 +83,17 @@ function AppNavigator() {
       <AppStack.Screen 
         name="Create" 
         component={CreateScreen}
-        options={{ title: 'New Item' }}
+        options={{ title: STRINGS.CREATE.TITLE }}
       />
       <AppStack.Screen 
         name="Edit" 
         component={EditScreen}
-        options={{ title: 'Edit Item' }}
+        options={{ title: STRINGS.EDIT.TITLE }}
       />
       <AppStack.Screen 
         name="Detail" 
         component={DetailScreen}
-        options={{ title: 'Item Details' }}
+        options={{ title: STRINGS.DETAIL.TITLE }}
       />
     </AppStack.Navigator>
   );
@@ -103,8 +104,8 @@ function AppNavigator() {
  */
 function LoadingScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-      <ActivityIndicator size="large" color={colors.primary} />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.background }}>
+      <ActivityIndicator size="large" color={COLORS.primary} />
     </View>
   );
 }

@@ -16,9 +16,10 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Button, Text, Input } from '../components';
 import { useAuth } from '../state/AuthContext';
+import { STRINGS } from '../config/strings';
+import { VALIDATION } from '../config/constants';
 import { layout, margins, paddings } from '../theme/styles';
 import { AuthStackParamList } from '../navigation/types';
-import { VALIDATION } from '../config/constants';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
 
@@ -40,27 +41,27 @@ export default function SignUpScreen({ navigation }: Props) {
     const newErrors: typeof errors = {};
 
     if (!name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = STRINGS.VALIDATION.NAME_REQUIRED;
     } else if (name.trim().length < VALIDATION.NAME_MIN_LENGTH) {
-      newErrors.name = `Name must be at least ${VALIDATION.NAME_MIN_LENGTH} characters`;
+      newErrors.name = STRINGS.VALIDATION.NAME_MIN_LENGTH;
     }
 
     if (!email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = STRINGS.VALIDATION.EMAIL_REQUIRED;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = STRINGS.VALIDATION.EMAIL_INVALID;
     }
 
     if (!password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = STRINGS.VALIDATION.PASSWORD_REQUIRED;
     } else if (password.length < VALIDATION.PASSWORD_MIN_LENGTH) {
-      newErrors.password = `Password must be at least ${VALIDATION.PASSWORD_MIN_LENGTH} characters`;
+      newErrors.password = STRINGS.VALIDATION.PASSWORD_MIN_LENGTH;
     }
 
     if (!confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
+      newErrors.confirmPassword = STRINGS.VALIDATION.CONFIRM_PASSWORD_REQUIRED;
     } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = STRINGS.VALIDATION.PASSWORD_MISMATCH;
     }
 
     setErrors(newErrors);
@@ -78,8 +79,8 @@ export default function SignUpScreen({ navigation }: Props) {
       });
     } catch (error) {
       Alert.alert(
-        'Sign Up Failed',
-        error instanceof Error ? error.message : 'Please try again.'
+        STRINGS.AUTH.SIGN_UP_FAILED,
+        error instanceof Error ? error.message : STRINGS.ERRORS.UNKNOWN
       );
     }
   };
@@ -98,59 +99,59 @@ export default function SignUpScreen({ navigation }: Props) {
       >
         {/* Header */}
         <View style={[margins.mbXl, { alignItems: 'center', marginTop: 40 }]}>
-          <Text variant="h1" align="center">Create Account</Text>
+          <Text variant="h1" align="center">{STRINGS.AUTH.SIGN_UP_TITLE}</Text>
           <Text variant="body" color="muted" align="center" style={margins.mtSm}>
-            Sign up to get started
+            {STRINGS.AUTH.SIGN_UP_SUBTITLE}
           </Text>
         </View>
 
         {/* Form */}
         <View style={margins.mbXl}>
           <Input
-            label="Full Name"
+            label={STRINGS.FORM.FULL_NAME}
             value={name}
             onChangeText={setName}
             error={errors.name}
             autoCapitalize="words"
             autoComplete="name"
-            placeholder="John Doe"
+            placeholder={STRINGS.AUTH.NAME_PLACEHOLDER}
           />
 
           <Input
-            label="Email"
+            label={STRINGS.FORM.EMAIL}
             value={email}
             onChangeText={setEmail}
             error={errors.email}
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder={STRINGS.AUTH.EMAIL_PLACEHOLDER}
           />
 
           <Input
-            label="Password"
+            label={STRINGS.FORM.PASSWORD}
             value={password}
             onChangeText={setPassword}
             error={errors.password}
             secureTextEntry
             autoComplete="new-password"
-            placeholder="Min 8 characters"
+            placeholder={STRINGS.AUTH.PASSWORD_PLACEHOLDER}
           />
 
           <Input
-            label="Confirm Password"
+            label={STRINGS.FORM.CONFIRM_PASSWORD}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             error={errors.confirmPassword}
             secureTextEntry
-            placeholder="Re-enter password"
+            placeholder={STRINGS.AUTH.CONFIRM_PASSWORD_PLACEHOLDER}
           />
         </View>
 
         {/* Actions */}
         <View>
           <Button
-            title="Create Account"
+            title={STRINGS.AUTH.SIGN_UP_BUTTON}
             fullWidth
             loading={isLoading}
             onPress={handleSignUp}
@@ -159,11 +160,11 @@ export default function SignUpScreen({ navigation }: Props) {
 
           <View style={[layout.rowCenter, { justifyContent: 'center' }]}>
             <Text variant="body" color="muted">
-              Already have an account?{' '}
+              {STRINGS.AUTH.HAS_ACCOUNT}{' '}
             </Text>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Text variant="body" color="primary" weight="semiBold">
-                Sign In
+                {STRINGS.AUTH.SIGN_IN}
               </Text>
             </TouchableOpacity>
           </View>
