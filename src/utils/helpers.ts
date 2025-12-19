@@ -202,10 +202,12 @@ export const last = <T>(array: T[]): T | undefined => {
  * Format date to readable string
  */
 export const formatDate = (
-  date: Date | string,
+  date: Date | string | undefined,
   options?: Intl.DateTimeFormatOptions
 ): string => {
+  if (!date) return '-';
   const d = typeof date === 'string' ? new Date(date) : date;
+  if (!d || !d.getTime || isNaN(d.getTime())) return '-';
   const defaultOptions: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',

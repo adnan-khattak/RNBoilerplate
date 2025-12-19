@@ -3,7 +3,7 @@ import { View, ScrollView, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Button, Text } from '@components';
+import { Button, Text, ErrorState } from '@components';
 import { deleteItem } from '@services/api';
 import { STRINGS } from '@config';
 import { colors, spacing, borderRadius } from '@theme';
@@ -20,12 +20,8 @@ import { formatDate, formatCurrency } from '@utils/helpers';
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
 export default function DetailScreen({ navigation, route }: Props) {
-  const { item } = route.params;
+  const item = (route as any)?.params?.item as import('@services/api').Item | undefined;
   const queryClient = useQueryClient();
-
-  const formattedCreatedAt = item.createdAt ? formatDate(item.createdAt) : '-';
-  const formattedUpdatedAt = item.updatedAt ? formatDate(item.updatedAt) : '-';
-
   /* ------------------ DELETE MUTATION ------------------ */
   const deleteMutation = useMutation({
     mutationFn: deleteItem,
@@ -37,6 +33,22 @@ export default function DetailScreen({ navigation, route }: Props) {
       Alert.alert(STRINGS.COMMON.ERROR, STRINGS.DETAIL.ERROR);
     },
   });
+
+  if (!item) {
+    return (
+      <View style={layout.container}>
+        <ErrorState
+          title={STRINGS.ALERTS.ERROR}
+          message={STRINGS.ERRORS.UNKNOWN}
+          onRetry={() => navigation.goBack()}
+          retryLabel={STRINGS.COMMON.BACK}
+        />
+      </View>
+    );
+  }
+
+  const formattedCreatedAt = formatDate(item.createdAt || '');
+  const formattedUpdatedAt = formatDate(item.updatedAt || '');
 
   const handleEdit = () => {
     navigation.navigate('Edit', { item });
