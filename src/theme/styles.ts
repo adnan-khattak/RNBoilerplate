@@ -579,6 +579,9 @@ export const cardStyles = StyleSheet.create({
     padding: spacing.base,
     ...shadows.lg,
   },
+  Height:{
+    height: 160,
+  }
 });
 
 // ============================================
@@ -613,6 +616,11 @@ export const imageStyles = StyleSheet.create({
     height: 32,
     borderRadius: borderRadius.full,
   },
+  avatarMedium: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
   avatarLarge: {
     width: 64,
     height: 64,
@@ -627,6 +635,9 @@ export const imageStyles = StyleSheet.create({
     width: '100%',
     height: 200,
     resizeMode: 'cover',
+  },
+  avatarPlaceholder: {
+    backgroundColor: colors.gray[200],
   },
 });
 
@@ -709,6 +720,43 @@ export const common = StyleSheet.create({
   },
 });
 
+// ============================================
+// AVATAR & HEADER STYLES
+// ============================================
+
+export const avatarStyles = StyleSheet.create({
+  initialsContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+export const headerStyles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.white,
+  },
+  topPadding: {
+    paddingTop: spacing.lg,
+  },
+});
+
+// ============================================
+// CONTENT CONTAINER STYLES
+// ============================================
+
+export const contentStyles = StyleSheet.create({
+  emptyContainer: {
+    paddingVertical: spacing['4xl'],
+  },
+  listContent: {
+    flexGrow: 1,
+  },
+});
+
 // Export all styles as a single object for convenience
 export const styles = {
   layout,
@@ -721,6 +769,9 @@ export const styles = {
   dividerStyles,
   imageStyles,
   borderStyles,
+  avatarStyles,
+  headerStyles,
+  contentStyles,
   common,
 };
 
