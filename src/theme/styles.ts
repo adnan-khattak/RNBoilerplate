@@ -381,9 +381,11 @@ export const buttonStyles = StyleSheet.create({
   // Button variants
   primary: {
     backgroundColor: colors.primary,
+    ...shadows.sm,
   },
   secondary: {
     backgroundColor: colors.secondary,
+    ...shadows.sm,
   },
   outline: {
     backgroundColor: colors.transparent,
@@ -395,9 +397,11 @@ export const buttonStyles = StyleSheet.create({
   },
   danger: {
     backgroundColor: colors.error,
+    ...shadows.sm,
   },
   success: {
     backgroundColor: colors.success,
+    ...shadows.sm,
   },
 
   // Button sizes
@@ -426,6 +430,9 @@ export const buttonStyles = StyleSheet.create({
     fontWeight: typography.fontWeight.semiBold,
     color: colors.white,
   },
+  textFilled: {
+    color: colors.white,
+  },
   textOutline: {
     color: colors.primary,
   },
@@ -435,8 +442,17 @@ export const buttonStyles = StyleSheet.create({
   textSmall: {
     fontSize: typography.fontSize.sm,
   },
+  textMedium: {
+    fontSize: typography.fontSize.md,
+  },
   textLarge: {
     fontSize: typography.fontSize.lg,
+  },
+  textWithLeftIcon: {
+    marginLeft: spacing.xs,
+  },
+  textWithRightIcon: {
+    marginRight: spacing.xs,
   },
 
   // Full width
@@ -455,12 +471,21 @@ export const inputStyles = StyleSheet.create({
     marginBottom: spacing.base,
   },
 
+  inputWrapper: {
+    position: 'relative',
+    justifyContent: 'center',
+  },
+
   // Label
   label: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
     color: colors.text,
     marginBottom: spacing.xs,
+  },
+
+  required: {
+    color: colors.error,
   },
 
   // Input base
@@ -511,9 +536,19 @@ export const inputStyles = StyleSheet.create({
   inputWithIcon: {
     paddingLeft: spacing['2xl'] + spacing.sm,
   },
+  inputWithRightIcon: {
+    paddingRight: spacing['2xl'] + spacing.sm,
+  },
   iconContainer: {
     position: 'absolute',
     left: spacing.base,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
+  rightIconContainer: {
+    position: 'absolute',
+    right: spacing.base,
     top: 0,
     bottom: 0,
     justifyContent: 'center',

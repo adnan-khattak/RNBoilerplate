@@ -4,15 +4,15 @@
  * Usage: <Text variant="h1">Hello World</Text>
  */
 
-import React from 'react';
+import React, {memo} from 'react';
 import {
   Text as RNText,
-  StyleSheet,
   TextStyle,
   StyleProp,
   TextProps as RNTextProps,
 } from 'react-native';
 import { colors, typography } from '@theme';
+import { textStyles } from '@theme/styles';
 
 // Text variants
 type TextVariant =
@@ -76,31 +76,29 @@ const Text: React.FC<TextProps> = ({
   const getVariantStyle = (): TextStyle => {
     switch (variant) {
       case 'h1':
-        return styles.h1;
+        return textStyles.h1;
       case 'h2':
-        return styles.h2;
+        return textStyles.h2;
       case 'h3':
-        return styles.h3;
+        return textStyles.h3;
       case 'h4':
-        return styles.h4;
+        return textStyles.h4;
       case 'h5':
-        return styles.h5;
+        return textStyles.h5;
       case 'h6':
-        return styles.h6;
+        return textStyles.h6;
       case 'body':
-        return styles.body;
+        return textStyles.body;
       case 'bodyLarge':
-        return styles.bodyLarge;
+        return textStyles.bodyLarge;
       case 'bodySmall':
-        return styles.bodySmall;
+        return textStyles.bodySmall;
       case 'caption':
-        return styles.caption;
+        return textStyles.caption;
       case 'label':
-        return styles.label;
-      case 'button':
-        return styles.button;
+        return textStyles.label;
       default:
-        return styles.body;
+        return textStyles.body;
     }
   };
 
@@ -153,67 +151,4 @@ const Text: React.FC<TextProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  h1: {
-    fontSize: typography.fontSize['4xl'],
-    fontWeight: typography.fontWeight.bold,
-    lineHeight: typography.fontSize['4xl'] * typography.lineHeight.tight,
-  },
-  h2: {
-    fontSize: typography.fontSize['3xl'],
-    fontWeight: typography.fontWeight.bold,
-    lineHeight: typography.fontSize['3xl'] * typography.lineHeight.tight,
-  },
-  h3: {
-    fontSize: typography.fontSize['2xl'],
-    fontWeight: typography.fontWeight.semiBold,
-    lineHeight: typography.fontSize['2xl'] * typography.lineHeight.tight,
-  },
-  h4: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.semiBold,
-    lineHeight: typography.fontSize.xl * typography.lineHeight.normal,
-  },
-  h5: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.medium,
-    lineHeight: typography.fontSize.lg * typography.lineHeight.normal,
-  },
-  h6: {
-    fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.medium,
-    lineHeight: typography.fontSize.md * typography.lineHeight.normal,
-  },
-  body: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.regular,
-    lineHeight: typography.fontSize.base * typography.lineHeight.normal,
-  },
-  bodyLarge: {
-    fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.regular,
-    lineHeight: typography.fontSize.md * typography.lineHeight.normal,
-  },
-  bodySmall: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.regular,
-    lineHeight: typography.fontSize.sm * typography.lineHeight.normal,
-  },
-  caption: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.regular,
-    lineHeight: typography.fontSize.xs * typography.lineHeight.normal,
-  },
-  label: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
-    lineHeight: typography.fontSize.sm * typography.lineHeight.normal,
-  },
-  button: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semiBold,
-    lineHeight: typography.fontSize.base * typography.lineHeight.tight,
-  },
-});
-
-export default Text;
+export default memo(Text);

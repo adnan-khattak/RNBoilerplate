@@ -4,19 +4,19 @@
  * Usage: <Input label="Email" placeholder="Enter email" onChangeText={(text) => {}} />
  */
 
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import {
   View,
   TextInput,
   Text,
-  StyleSheet,
   ViewStyle,
   TextStyle,
   StyleProp,
   TextInputProps,
   TouchableOpacity,
 } from 'react-native';
-import { colors, spacing, typography, borderRadius } from '@theme';
+import { colors } from '@theme';
+import { inputStyles } from '@theme/styles';
 
 interface InputProps extends Omit<TextInputProps, 'style'> {
   label?: string;
@@ -60,27 +60,27 @@ const Input: React.FC<InputProps> = ({
   };
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={[inputStyles.container, containerStyle]}>
       {label && (
-        <Text style={[styles.label, labelStyle]}>
+        <Text style={[inputStyles.label, labelStyle]}>
           {label}
-          {required && <Text style={styles.required}> *</Text>}
+          {required && <Text style={inputStyles.required}> *</Text>}
         </Text>
       )}
 
-      <View style={styles.inputWrapper}>
-        {leftIcon && <View style={styles.leftIconContainer}>{leftIcon}</View>}
+      <View style={inputStyles.inputWrapper}>
+        {leftIcon && <View style={inputStyles.iconContainer}>{leftIcon}</View>}
 
         <TextInput
           {...textInputProps}
           style={[
-            styles.input,
-            leftIcon && styles.inputWithLeftIcon,
-            rightIcon && styles.inputWithRightIcon,
-            multiline && styles.multiline,
-            isFocused && styles.inputFocused,
-            error && styles.inputError,
-            disabled && styles.inputDisabled,
+            inputStyles.input,
+            !!leftIcon && inputStyles.inputWithIcon,
+            !!rightIcon && inputStyles.inputWithRightIcon,
+            multiline && inputStyles.multiline,
+            isFocused && inputStyles.inputFocused,
+            !!error && inputStyles.inputError,
+            disabled && inputStyles.inputDisabled,
             inputStyle,
           ]}
           editable={!disabled}
@@ -90,9 +90,9 @@ const Input: React.FC<InputProps> = ({
           multiline={multiline}
         />
 
-        {rightIcon && (
+        {!!rightIcon && (
           <TouchableOpacity
-            style={styles.rightIconContainer}
+            style={inputStyles.rightIconContainer}
             onPress={onRightIconPress}
             disabled={!onRightIconPress}
             activeOpacity={onRightIconPress ? 0.7 : 1}
@@ -102,82 +102,9 @@ const Input: React.FC<InputProps> = ({
         )}
       </View>
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
-      {helperText && !error && <Text style={styles.helperText}>{helperText}</Text>}
+      {error && <Text style={inputStyles.errorText}>{error}</Text>}
+      {helperText && !error && <Text style={inputStyles.helperText}>{helperText}</Text>}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: spacing.base,
-  },
-  label: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.text,
-    marginBottom: spacing.xs,
-  },
-  required: {
-    color: colors.error,
-  },
-  inputWrapper: {
-    position: 'relative',
-    justifyContent: 'center',
-  },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.base,
-    fontSize: typography.fontSize.base,
-    color: colors.text,
-    backgroundColor: colors.white,
-  },
-  inputWithLeftIcon: {
-    paddingLeft: spacing['2xl'] + spacing.sm,
-  },
-  inputWithRightIcon: {
-    paddingRight: spacing['2xl'] + spacing.sm,
-  },
-  multiline: {
-    height: 100,
-    paddingTop: spacing.md,
-    textAlignVertical: 'top',
-  },
-  inputFocused: {
-    borderColor: colors.primary,
-    borderWidth: 2,
-  },
-  inputError: {
-    borderColor: colors.error,
-    borderWidth: 1.5,
-  },
-  inputDisabled: {
-    backgroundColor: colors.gray[100],
-    color: colors.textDisabled,
-  },
-  leftIconContainer: {
-    position: 'absolute',
-    left: spacing.base,
-    zIndex: 1,
-  },
-  rightIconContainer: {
-    position: 'absolute',
-    right: spacing.base,
-    zIndex: 1,
-  },
-  helperText: {
-    fontSize: typography.fontSize.xs,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-  },
-  errorText: {
-    fontSize: typography.fontSize.xs,
-    color: colors.error,
-    marginTop: spacing.xs,
-  },
-});
-
-export default Input;
+export default memo(Input);

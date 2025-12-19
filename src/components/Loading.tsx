@@ -3,10 +3,11 @@
  * Displays a loading spinner with optional message
  */
 
-import React from 'react';
-import { View, ActivityIndicator, StyleSheet, ViewStyle, StyleProp } from 'react-native';
+import React, {memo} from 'react';
+import { View, ActivityIndicator, ViewStyle, StyleProp } from 'react-native';
 import Text  from './Text';
-import { colors, spacing } from '@theme';
+import { colors } from '@theme';
+import { layout, paddings, margins } from '@theme/styles';
 
 interface LoadingProps {
   message?: string;
@@ -24,10 +25,10 @@ export const Loading: React.FC<LoadingProps> = ({
   style,
 }) => {
   return (
-    <View style={[styles.container, fullScreen && styles.fullScreen, style]}>
+    <View style={[paddings.pXl, layout.center, fullScreen && { ...layout.container, backgroundColor: colors.background }, style]}>
       <ActivityIndicator size={size} color={color} />
       {message && (
-        <Text variant="body" color="muted" style={styles.message}>
+        <Text variant="body" color="muted" style={margins.mtMd}>
           {message}
         </Text>
       )}
@@ -35,19 +36,4 @@ export const Loading: React.FC<LoadingProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    padding: spacing.xl,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fullScreen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  message: {
-    marginTop: spacing.md,
-  },
-});
-
-export default Loading;
+export default memo(Loading);

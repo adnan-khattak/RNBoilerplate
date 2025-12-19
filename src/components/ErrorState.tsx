@@ -3,11 +3,11 @@
  * Displays when an error occurs
  */
 
-import React from 'react';
-import { View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
+import React, {memo} from 'react';
+import { View, ViewStyle, StyleProp } from 'react-native';
 import Text  from './Text';
 import Button  from './Button';
-import { spacing } from '@theme';
+import { layout, paddings, margins } from '@theme/styles';
 
 interface ErrorStateProps {
   title?: string;
@@ -25,8 +25,8 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   style,
 }) => {
   return (
-    <View style={[styles.container, style]}>
-      <View style={styles.iconContainer}>
+    <View style={[layout.flex1, layout.center, paddings.pXl, style]}>
+      <View style={margins.mbLg}>
         <Text variant="h1">⚠️</Text>
       </View>
       
@@ -34,7 +34,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
         {title}
       </Text>
       
-      <Text variant="body" align="center" color="muted" style={styles.message}>
+      <Text variant="body" align="center" color="muted" style={[margins.mtSm, margins.mbLg]}>
         {message}
       </Text>
       
@@ -43,30 +43,11 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
           title={retryLabel}
           variant="primary"
           onPress={onRetry}
-          style={styles.button}
+          style={margins.mtMd}
         />
       )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.xl,
-  },
-  iconContainer: {
-    marginBottom: spacing.lg,
-  },
-  message: {
-    marginTop: spacing.sm,
-    marginBottom: spacing.lg,
-  },
-  button: {
-    marginTop: spacing.md,
-  },
-});
-
-export default ErrorState;
+export default memo(ErrorState);
