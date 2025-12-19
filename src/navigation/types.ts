@@ -1,4 +1,4 @@
-import { Item } from '../services/api';
+import { Item } from '@services/api';
 
 /**
  * Navigation Types

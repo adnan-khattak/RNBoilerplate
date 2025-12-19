@@ -10,8 +10,8 @@
  * Replace with AsyncStorage for persistence across app restarts.
  */
 
-import { User } from '../state/authTypes';
-import { STORAGE_KEYS } from '../config/constants';
+import { User } from '@state/authTypes';
+import { STORAGE_KEYS } from '@config';
 
 // =============================================================================
 // IN-MEMORY STORAGE (Demo/Development)

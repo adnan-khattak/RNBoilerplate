@@ -6,7 +6,7 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import Text  from './Text';
-import { colors, spacing } from '../theme';
+import { colors, spacing } from '@theme';
 
 interface LoadingProps {
   message?: string;

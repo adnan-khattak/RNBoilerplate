@@ -7,10 +7,10 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { QUERY_KEYS } from '../config/constants';
+import { QUERY_KEYS } from '@config';
 import { authApi } from './authApi';
 import { authStorage } from './authStorage';
-import { LoginRequest, RegisterRequest } from '../state/authTypes';
+import { LoginRequest, RegisterRequest } from '@state/authTypes';
 
 /**
  * Hook to get current user (useful for profile screens)

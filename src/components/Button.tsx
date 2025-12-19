@@ -14,7 +14,7 @@ import {
   TextStyle,
   StyleProp,
 } from 'react-native';
-import { colors, spacing, typography, borderRadius, shadows } from '../theme';
+import { colors, spacing, typography, borderRadius, shadows } from '@theme';
 
 // Button variants
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';

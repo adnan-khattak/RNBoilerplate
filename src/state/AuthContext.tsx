@@ -9,8 +9,8 @@
 import React, { createContext, useReducer, useContext, useEffect, useCallback } from 'react';
 import { authReducer, authInitialState } from './authReducer';
 import { AuthState, LoginRequest, RegisterRequest } from './authTypes';
-import { authStorage } from '../services/authStorage';
-import { authApi } from '../services/authApi';
+import { authStorage } from '@services/authStorage';
+import { authApi } from '@services/authApi';
 
 interface AuthContextType {
   authState: AuthState;

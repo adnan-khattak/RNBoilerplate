@@ -7,12 +7,11 @@ import React from 'react';
 import { View, ScrollView, Image, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { Button, Text, Card } from '../components';
-import { useAuth } from '../state/AuthContext';
-import { COLORS } from '../config/colors';
-import { STRINGS } from '../config/strings';
-import { layout, margins, paddings } from '../theme/styles';
-import { AppStackParamList } from '../navigation/types';
+import { Button, Text, Card } from '@components';
+import { useAuth } from '@state/AuthContext';
+import { COLORS, STRINGS } from '@config';
+import { layout, margins, paddings } from '@theme/styles';
+import { AppStackParamList } from '@navigation/types';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Profile'>;
 
@@ -48,7 +47,7 @@ export default function ProfileScreen({}: Props) {
   return (
     <ScrollView
       style={layout.container}
-      contentContainerStyle={[paddings.pBase, { paddingBottom: 32 }]}
+      contentContainerStyle={[paddings.pBase, paddings.pbXl]}
     >
       {/* Avatar Section */}
       <View style={[layout.center, margins.mbXl]}>

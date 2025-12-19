@@ -16,7 +16,7 @@ import {
   TextInputProps,
   TouchableOpacity,
 } from 'react-native';
-import { colors, spacing, typography, borderRadius } from '../theme';
+import { colors, spacing, typography, borderRadius } from '@theme';
 
 interface InputProps extends Omit<TextInputProps, 'style'> {
   label?: string;

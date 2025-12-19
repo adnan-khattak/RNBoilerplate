@@ -4,7 +4,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
-import { QUERY_KEYS } from '../config/constants';
+import { QUERY_KEYS } from '@config';
 import { getItems, getItem, createItem, updateItem, deleteItem, Item } from './api';
 
 /**

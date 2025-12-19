@@ -11,21 +11,20 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View } from 'react-native';
 
-import { useAuth } from '../state/AuthContext';
-import { COLORS } from '../config/colors';
-import { STRINGS } from '../config/strings';
-import { AuthStackParamList, AppStackParamList } from './types';
+import { useAuth } from '@state/AuthContext';
+import { COLORS, STRINGS } from '@config';
+import { AuthStackParamList, AppStackParamList } from '@navigation/types';
 
 // Auth Screens
-import SignInScreen from '../screens/SignInScreen';
-import SignUpScreen from '../screens/SignUpScreen';
+import SignInScreen from '@screens/SignInScreen';
+import SignUpScreen from '@screens/SignUpScreen';
 
 // App Screens
-import HomeScreen from '../screens/HomeScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import CreateScreen from '../screens/CreateScreen';
-import EditScreen from '../screens/EditScreen';
-import DetailScreen from '../screens/DetailScreen';
+import HomeScreen from '@screens/HomeScreen';
+import ProfileScreen from '@screens/ProfileScreen';
+import CreateScreen from '@screens/CreateScreen';
+import EditScreen from '@screens/EditScreen';
+import DetailScreen from '@screens/DetailScreen';
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const AppStack = createNativeStackNavigator<AppStackParamList>();
@@ -78,7 +77,7 @@ function AppNavigator() {
       <AppStack.Screen 
         name="Profile" 
         component={ProfileScreen}
-        options={{ title: 'My Profile' }}
+        options={{ title: STRINGS.PROFILE.TITLE }}
       />
       <AppStack.Screen 
         name="Create" 

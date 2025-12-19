@@ -9,10 +9,11 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Button, Text, Input } from '../components';
-import { createItem, Item } from '../services/api';
-import { layout, margins, paddings } from '../theme/styles';
-import { RootStackParamList } from '../navigation/types';
+import { Button, Text, Input } from '@components';
+import { createItem, Item } from '@services/api';
+import { STRINGS } from '@config';
+import { layout, margins, paddings } from '@theme/styles';
+import { RootStackParamList } from '@navigation/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Create'>;
 
@@ -30,12 +31,12 @@ export default function CreateScreen({ navigation }: Props) {
     mutationFn: createItem,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['items'] });
-      Alert.alert('Success', 'Item created successfully', [
-        { text: 'OK', onPress: () => navigation.goBack() },
+      Alert.alert(STRINGS.COMMON.SUBMIT, STRINGS.CREATE.SUCCESS, [
+        { text: STRINGS.COMMON.OK, onPress: () => navigation.goBack() },
       ]);
     },
     onError: () => {
-      Alert.alert('Error', 'Failed to create item');
+      Alert.alert(STRINGS.COMMON.ERROR, STRINGS.CREATE.ERROR);
     },
   });
 
@@ -44,15 +45,15 @@ export default function CreateScreen({ navigation }: Props) {
     const newErrors: { name?: string; description?: string } = {};
 
     if (!name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = STRINGS.VALIDATION.NAME_REQUIRED;
     } else if (name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
+      newErrors.name = STRINGS.VALIDATION.NAME_MIN_LENGTH;
     }
 
     if (!description.trim()) {
-      newErrors.description = 'Description is required';
+      newErrors.description = STRINGS.VALIDATION.DESCRIPTION_REQUIRED;
     } else if (description.trim().length < 10) {
-      newErrors.description = 'Description must be at least 10 characters';
+      newErrors.description = STRINGS.VALIDATION.DESCRIPTION_MIN_LENGTH;
     }
 
     setErrors(newErrors);
@@ -77,21 +78,21 @@ export default function CreateScreen({ navigation }: Props) {
     >
       <ScrollView
         style={layout.container}
-        contentContainerStyle={[paddings.pBase, { paddingBottom: 32 }]}
+        contentContainerStyle={[paddings.pBase, paddings.pbXl]}
         keyboardShouldPersistTaps="handled"
       >
         {/* Header */}
         <View style={margins.mbXl}>
-          <Text variant="h3">Create New Item</Text>
+          <Text variant="h3">{STRINGS.CREATE.HEADER}</Text>
           <Text variant="body" color="muted" style={margins.mtXs}>
-            Fill in the details below to add a new item
+            {STRINGS.CREATE.SUBTITLE}
           </Text>
         </View>
 
         {/* Form */}
         <View style={margins.mbXl}>
           <Input
-            label="Name"
+            label={STRINGS.FORM.NAME}
             value={name}
             onChangeText={setName}
             error={errors.name}
@@ -100,7 +101,7 @@ export default function CreateScreen({ navigation }: Props) {
           />
 
           <Input
-            label="Description"
+            label={STRINGS.FORM.DESCRIPTION}
             value={description}
             onChangeText={setDescription}
             error={errors.description}
@@ -109,25 +110,25 @@ export default function CreateScreen({ navigation }: Props) {
           />
 
           <Input
-            label="Price (Optional)"
+            label={STRINGS.FORM.PRICE_OPTIONAL}
             value={price}
             onChangeText={setPrice}
             keyboardType="decimal-pad"
-            helperText="Leave empty if not applicable"
+            helperText={STRINGS.CREATE.PRICE_HELPER}
           />
         </View>
 
         {/* Actions */}
         <View style={margins.mtLg}>
           <Button
-            title="Create Item"
+            title={STRINGS.CREATE.TITLE}
             fullWidth
             loading={createMutation.isPending}
             onPress={handleSubmit}
             style={margins.mbMd}
           />
           <Button
-            title="Cancel"
+            title={STRINGS.COMMON.CANCEL}
             variant="ghost"
             fullWidth
             onPress={() => navigation.goBack()}

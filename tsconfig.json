@@ -5,14 +5,23 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@components": ["src/components"],
       "@components/*": ["src/components/*"],
+      "@screens": ["src/screens"],
       "@screens/*": ["src/screens/*"],
+      "@utils": ["src/utils"],
       "@utils/*": ["src/utils/*"],
+      "@theme": ["src/theme"],
       "@theme/*": ["src/theme/*"],
+      "@navigation": ["src/navigation"],
       "@navigation/*": ["src/navigation/*"],
+      "@services": ["src/services"],
       "@services/*": ["src/services/*"],
+      "@assets": ["src/assets"],
       "@assets/*": ["src/assets/*"],
+      "@config": ["src/config"],
       "@config/*": ["src/config/*"],
+      "@state": ["src/state"],
       "@state/*": ["src/state/*"]
     }
   },

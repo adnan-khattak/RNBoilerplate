@@ -12,7 +12,7 @@ import {
   StyleProp,
   TextProps as RNTextProps,
 } from 'react-native';
-import { colors, typography } from '../theme';
+import { colors, typography } from '@theme';
 
 // Text variants
 type TextVariant =

@@ -9,11 +9,11 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Button, Text, Input } from '../components';
-import { updateItem, Item } from '../services/api';
-import { spacing } from '../theme/theme';
-import { layout, margins, paddings } from '../theme/styles';
-import { RootStackParamList } from '../navigation/types';
+import { Button, Text, Input } from '@components';
+import { updateItem, Item } from '@services/api';
+import { STRINGS } from '@config';
+import { layout, margins, paddings } from '@theme/styles';
+import { RootStackParamList } from '@navigation/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Edit'>;
 
@@ -22,8 +22,8 @@ export default function EditScreen({ navigation, route }: Props) {
   const queryClient = useQueryClient();
 
   /* ------------------ FORM STATE ------------------ */
-  const [name, setName] = useState(item.name);
-  const [description, setDescription] = useState(item.description);
+  const [name, setName] = useState(item.name || '');
+  const [description, setDescription] = useState(item.description || '');
   const [price, setPrice] = useState(item.price?.toString() || '');
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
 
@@ -87,21 +87,21 @@ export default function EditScreen({ navigation, route }: Props) {
     >
       <ScrollView
         style={layout.container}
-        contentContainerStyle={[paddings.pBase, { paddingBottom: 32 }]}
+        contentContainerStyle={[paddings.pBase, paddings.pbXl]}
         keyboardShouldPersistTaps="handled"
       >
         {/* Header */}
         <View style={margins.mbXl}>
-          <Text variant="h3">Edit Item</Text>
+          <Text variant="h3">{STRINGS.EDIT.TITLE}</Text>
           <Text variant="body" color="muted" style={margins.mtXs}>
-            Update the item details below
+            {STRINGS.EDIT.SUBTITLE}
           </Text>
         </View>
 
         {/* Form */}
         <View style={margins.mbXl}>
           <Input
-            label="Name"
+            label={STRINGS.FORM.NAME}
             value={name}
             onChangeText={setName}
             error={errors.name}
@@ -109,7 +109,7 @@ export default function EditScreen({ navigation, route }: Props) {
           />
 
           <Input
-            label="Description"
+            label={STRINGS.FORM.DESCRIPTION}
             value={description}
             onChangeText={setDescription}
             error={errors.description}
@@ -118,18 +118,18 @@ export default function EditScreen({ navigation, route }: Props) {
           />
 
           <Input
-            label="Price (Optional)"
+            label={STRINGS.FORM.PRICE_OPTIONAL}
             value={price}
             onChangeText={setPrice}
             keyboardType="decimal-pad"
-            helperText="Leave empty if not applicable"
+            helperText={STRINGS.CREATE.PRICE_HELPER}
           />
         </View>
 
         {/* Actions */}
         <View style={margins.mtLg}>
           <Button
-            title="Save Changes"
+            title={STRINGS.EDIT.SAVE_CHANGES}
             fullWidth
             loading={updateMutation.isPending}
             disabled={!hasChanges()}
@@ -137,7 +137,7 @@ export default function EditScreen({ navigation, route }: Props) {
             style={margins.mbMd}
           />
           <Button
-            title="Cancel"
+            title={STRINGS.COMMON.CANCEL}
             variant="ghost"
             fullWidth
             onPress={() => navigation.goBack()}

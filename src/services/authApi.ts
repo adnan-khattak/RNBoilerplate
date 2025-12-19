@@ -17,8 +17,8 @@
  * - createdAt (string)
  */
 
-import { API_CONFIG } from '../config/constants';
-import { User, LoginRequest, RegisterRequest, AuthResponse } from '../state/authTypes';
+import { API_CONFIG } from '@config';
+import { User, LoginRequest, RegisterRequest, AuthResponse } from '@state/authTypes';
 
 const AUTH_ENDPOINT = `${API_CONFIG.BASE_URL}/users`;
 

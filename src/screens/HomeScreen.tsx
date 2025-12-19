@@ -2,14 +2,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, FlatList, Alert, RefreshControl, TouchableOpacity, Image } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Text } from '../components';
-import { getItems, deleteItem, Item } from '../services/api';
-import { useAuth } from '../state/AuthContext';
-import { COLORS } from '../config/colors';
-import { STRINGS } from '../config/strings';
-import { spacing } from '../theme/theme';
-import { layout, margins, paddings, cardStyles, borderStyles } from '../theme/styles';
-import { AppStackParamList } from '../navigation/types';
+import { Button, Text } from '@components';
+import { getItems, deleteItem, Item } from '@services/api';
+import { useAuth } from '@state/AuthContext';
+import { COLORS, STRINGS } from '@config';
+import { spacing } from '@theme';
+import { layout, margins, paddings, cardStyles, borderStyles } from '@theme/styles';
+import { AppStackParamList } from '@navigation/types';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Home'>;
 

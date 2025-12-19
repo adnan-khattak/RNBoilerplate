@@ -3,24 +3,28 @@ import { View, ScrollView, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Button, Text } from '../components';
-import { deleteItem, Item } from '../services/api';
-import { colors, spacing, borderRadius } from '../theme/theme';
+import { Button, Text } from '@components';
+import { deleteItem } from '@services/api';
+import { STRINGS } from '@config';
+import { colors, spacing, borderRadius } from '@theme';
 import {
   layout,
   margins,
   paddings,
   cardStyles,
   dividerStyles,
-} from '../theme/styles';
-import { RootStackParamList } from '../navigation/types';
-import { formatDate, formatCurrency } from '../utils/helpers';
+} from '@theme/styles';
+import { RootStackParamList } from '@navigation/types';
+import { formatDate, formatCurrency } from '@utils/helpers';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
 export default function DetailScreen({ navigation, route }: Props) {
   const { item } = route.params;
   const queryClient = useQueryClient();
+
+  const formattedCreatedAt = item.createdAt ? formatDate(item.createdAt) : '-';
+  const formattedUpdatedAt = item.updatedAt ? formatDate(item.updatedAt) : '-';
 
   /* ------------------ DELETE MUTATION ------------------ */
   const deleteMutation = useMutation({
@@ -30,7 +34,7 @@ export default function DetailScreen({ navigation, route }: Props) {
       navigation.goBack();
     },
     onError: () => {
-      Alert.alert('Error', 'Failed to delete item');
+      Alert.alert(STRINGS.COMMON.ERROR, STRINGS.DETAIL.ERROR);
     },
   });
 
@@ -40,12 +44,12 @@ export default function DetailScreen({ navigation, route }: Props) {
 
   const handleDelete = () => {
     Alert.alert(
-      'Delete Item',
-      `Are you sure you want to delete "${item.name}"? This action cannot be undone.`,
+      STRINGS.COMMON.DELETE,
+      STRINGS.DETAIL.DELETE_CONFIRM(item.name),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: STRINGS.COMMON.CANCEL, style: 'cancel' },
         {
-          text: 'Delete',
+          text: STRINGS.COMMON.DELETE,
           style: 'destructive',
           onPress: () => deleteMutation.mutate(item.id),
         },
@@ -56,7 +60,7 @@ export default function DetailScreen({ navigation, route }: Props) {
   return (
     <ScrollView
       style={layout.container}
-      contentContainerStyle={[paddings.pBase, { paddingBottom: 32 }]}
+      contentContainerStyle={[paddings.pBase, paddings.pbXl]}
     >
       {/* Main Card */}
       <View style={cardStyles.elevated}>
@@ -89,7 +93,7 @@ export default function DetailScreen({ navigation, route }: Props) {
         {/* Description */}
         <View style={margins.mbLg}>
           <Text variant="label" color="muted" style={margins.mbXs}>
-            Description
+            {STRINGS.FORM.DESCRIPTION}
           </Text>
           <Text variant="body">{item.description}</Text>
         </View>
@@ -107,19 +111,19 @@ export default function DetailScreen({ navigation, route }: Props) {
         >
           <View style={layout.rowBetween}>
             <Text variant="caption" color="muted">
-              Created
+              {STRINGS.DETAIL.CREATED}
             </Text>
             <Text variant="bodySmall">
-              {formatDate(item.createdAt)}
+              {formattedCreatedAt}
             </Text>
           </View>
 
           <View style={layout.rowBetween}>
             <Text variant="caption" color="muted">
-              Last Updated
+              {STRINGS.DETAIL.UPDATED}
             </Text>
             <Text variant="bodySmall">
-              {formatDate(item.updatedAt)}
+              {formattedUpdatedAt}
             </Text>
           </View>
 
@@ -135,13 +139,13 @@ export default function DetailScreen({ navigation, route }: Props) {
       {/* Actions */}
       <View style={margins.mtXl}>
         <Button
-          title="Edit Item"
+          title={STRINGS.DETAIL.EDIT_BUTTON}
           fullWidth
           onPress={handleEdit}
           style={margins.mbMd}
         />
         <Button
-          title="Delete Item"
+          title={STRINGS.DETAIL.DELETE_BUTTON}
           variant="danger"
           fullWidth
           loading={deleteMutation.isPending}
@@ -149,7 +153,7 @@ export default function DetailScreen({ navigation, route }: Props) {
           style={margins.mbMd}
         />
         <Button
-          title="Back to List"
+          title={STRINGS.COMMON.BACK}
           variant="ghost"
           fullWidth
           onPress={() => navigation.goBack()}

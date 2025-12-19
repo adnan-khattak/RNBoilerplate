@@ -7,7 +7,7 @@ import React from 'react';
 import { View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import Text  from './Text';
 import  Button  from './Button';
-import { spacing } from '../theme';
+import { spacing } from '@theme';
 
 interface EmptyStateProps {
   title: string;

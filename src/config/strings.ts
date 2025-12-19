@@ -139,6 +139,7 @@ export const STRINGS = {
     UPDATED: 'Last Updated',
     EDIT_BUTTON: 'Edit Item',
     DELETE_BUTTON: 'Delete Item',
+    ERROR: 'Failed to delete item',
     DELETE_CONFIRM: (name: string) => 
       `Are you sure you want to delete "${name}"? This action cannot be undone.`,
   },
