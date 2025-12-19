@@ -16,8 +16,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Button, Text, Input } from '../components';
 import { useAuth } from '../state/AuthContext';
-import { COLORS } from '../config/colors';
-import { STRINGS } from '../config/strings';
+import { COLORS, STRINGS } from '../config';
 import { VALIDATION } from '../config/constants';
 import { layout, margins, paddings } from '../theme/styles';
 import { AuthStackParamList } from '../navigation/types';
