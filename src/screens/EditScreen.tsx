@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -42,7 +42,7 @@ export default function EditScreen({ navigation, route }: Props) {
   });
 
   /* ------------------ VALIDATION ------------------ */
-  const validate = (): boolean => {
+  const validate = useCallback((): boolean => {
     const newErrors: { name?: string; description?: string } = {};
 
     if (!name.trim()) {
@@ -59,10 +59,10 @@ export default function EditScreen({ navigation, route }: Props) {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [description, name]);
 
   /* ------------------ SUBMIT ------------------ */
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (!validate()) return;
 
     updateMutation.mutate({
@@ -70,15 +70,15 @@ export default function EditScreen({ navigation, route }: Props) {
       description: description.trim(),
       price: price ? parseFloat(price) : undefined,
     });
-  };
+  }, [description, name, price, updateMutation, validate]);
 
-  const hasChanges = () => {
+  const hasChanges = useCallback(() => {
     return (
       name !== item.name ||
       description !== item.description ||
       price !== (item.price?.toString() || '')
     );
-  };
+  }, [description, item, name, price]);
 
   return (
     <KeyboardAvoidingView

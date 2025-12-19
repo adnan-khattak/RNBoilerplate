@@ -3,7 +3,7 @@
  * Displays user information and logout option
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, ScrollView, Image, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -19,7 +19,7 @@ export default function ProfileScreen({}: Props) {
   const { authState, signOut } = useAuth();
   const { user } = authState;
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     Alert.alert(
       STRINGS.AUTH.SIGN_OUT,
       STRINGS.AUTH.SIGN_OUT_CONFIRM,
@@ -34,7 +34,7 @@ export default function ProfileScreen({}: Props) {
         },
       ]
     );
-  };
+  }, [signOut]);
 
   if (!user) {
     return (

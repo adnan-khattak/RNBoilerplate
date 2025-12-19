@@ -3,7 +3,7 @@
  * Registration form for new users
  */
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -36,7 +36,7 @@ export default function SignUpScreen({ navigation }: Props) {
     confirmPassword?: string;
   }>({});
 
-  const validate = (): boolean => {
+  const validate = useCallback((): boolean => {
     const newErrors: typeof errors = {};
 
     if (!name.trim()) {
@@ -65,9 +65,9 @@ export default function SignUpScreen({ navigation }: Props) {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [confirmPassword, email, name, password]);
 
-  const handleSignUp = async () => {
+  const handleSignUp = useCallback(async () => {
     if (!validate()) return;
 
     try {
@@ -82,7 +82,7 @@ export default function SignUpScreen({ navigation }: Props) {
         error instanceof Error ? error.message : STRINGS.ERRORS.UNKNOWN
       );
     }
-  };
+  }, [email, name, password, signUp, validate]);
 
   const isLoading = authState.status === 'checking';
 

@@ -3,7 +3,7 @@
  * Email/password login form
  */
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -29,7 +29,7 @@ export default function SignInScreen({ navigation }: Props) {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
-  const validate = (): boolean => {
+  const validate = useCallback((): boolean => {
     const newErrors: { email?: string; password?: string } = {};
 
     if (!email.trim()) {
@@ -46,9 +46,9 @@ export default function SignInScreen({ navigation }: Props) {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [email, password]);
 
-  const handleSignIn = async () => {
+  const handleSignIn = useCallback(async () => {
     if (!validate()) return;
 
     try {
@@ -59,7 +59,7 @@ export default function SignInScreen({ navigation }: Props) {
         error instanceof Error ? error.message : STRINGS.ERRORS.UNKNOWN
       );
     }
-  };
+  }, [email, password, signIn, validate]);
 
   const isLoading = authState.status === 'checking';
 

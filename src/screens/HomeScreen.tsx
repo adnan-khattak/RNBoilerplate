@@ -41,7 +41,8 @@ export default function HomeScreen({ navigation }: Props) {
     return unsubscribe;
   }, [navigation, fetchItems]);
 
-  const handleDelete = (item: Item) => {
+  const handleDelete = useCallback(
+  (item: Item) => {
     Alert.alert(
       STRINGS.HOME.DELETE_TITLE,
       STRINGS.HOME.DELETE_MESSAGE(item.name),
@@ -61,14 +62,16 @@ export default function HomeScreen({ navigation }: Props) {
         },
       ]
     );
-  };
+  }, 
+  [fetchItems]
+);
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchItems();
-  };
+  }, [fetchItems]);
 
-  const renderItem = ({ item }: { item: Item }) => (
+  const renderItem = useCallback(({ item }: { item: Item }) => (
     <TouchableOpacity
       style={[cardStyles.base, margins.mbMd]}
       activeOpacity={0.7}
@@ -111,7 +114,9 @@ export default function HomeScreen({ navigation }: Props) {
         />
       </View>
     </TouchableOpacity>
-  );
+  ), 
+  [handleDelete, navigation]
+);
 
   const renderEmpty = () => (
     <View style={[layout.flex1, layout.center, { paddingVertical: spacing['4xl'] }]}>

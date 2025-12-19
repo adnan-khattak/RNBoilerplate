@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -41,7 +41,7 @@ export default function CreateScreen({ navigation }: Props) {
   });
 
   /* ------------------ VALIDATION ------------------ */
-  const validate = (): boolean => {
+  const validate = useCallback((): boolean => {
     const newErrors: { name?: string; description?: string } = {};
 
     if (!name.trim()) {
@@ -58,10 +58,10 @@ export default function CreateScreen({ navigation }: Props) {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [description, name]);
 
   /* ------------------ SUBMIT ------------------ */
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (!validate()) return;
 
     createMutation.mutate({
@@ -69,7 +69,7 @@ export default function CreateScreen({ navigation }: Props) {
       description: description.trim(),
       price: price ? parseFloat(price) : undefined,
     });
-  };
+  }, [createMutation, description, name, price, validate]);
 
   return (
     <KeyboardAvoidingView
