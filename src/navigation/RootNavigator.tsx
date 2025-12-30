@@ -7,7 +7,7 @@
  * - Modify screen options for custom headers
  */
 import React, { Suspense } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+// REMOVED: import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View } from 'react-native';
 
@@ -136,13 +136,10 @@ export default function RootNavigator() {
     return <LoadingScreen />;
   }
 
-  return (
-    <NavigationContainer>
-      {authState.status === 'authenticated' ? (
-        <AppNavigator />
-      ) : (
-        <AuthNavigator />
-      )}
-    </NavigationContainer>
+  // REMOVED: NavigationContainer wrapper
+  return authState.status === 'authenticated' ? (
+    <AppNavigator />
+  ) : (
+    <AuthNavigator />
   );
 }

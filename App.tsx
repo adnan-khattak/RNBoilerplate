@@ -1,49 +1,81 @@
-import React, { useEffect } from 'react';
+// App.tsx - Keep as is (this is the CORRECT setup)
+import React, { useEffect, useRef } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import RootNavigator from './src/navigation/RootNavigator';
+import { NavigationContainer } from '@react-navigation/native';
+import RootNavigator from './src/navigation/RootNavigator'; // Updated version without NavigationContainer
 import { AppProvider } from './src/state/AppContext';
 import { AuthProvider } from './src/state/AuthContext';
 import notificationService from '@services/notification/Notification';
 import messaging from '@react-native-firebase/messaging';
 
-// Initialize QueryClient for React Query
 const queryClient = new QueryClient();
-export default function App() {
-  useEffect(() => {
-    // 1. Start notification system when app opens
-    notificationService.initialize();
-    
-    // 2. Listen for notifications when app is IN BACKGROUND
-    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-      console.log('📱 Background notification received!');
-      
-      // Show the notification
-      await notificationService.showNotification(
-        remoteMessage.notification?.title || 'New Message',
-        remoteMessage.notification?.body || 'You have a new notification'
-      );
-    });
-    
-    // 3. Listen for notifications when app is OPEN (foreground)
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      console.log('📱 Foreground notification received!');
-      
-      // Show the notification
-      await notificationService.showNotification(
-        remoteMessage.notification?.title || 'New Message',
-        remoteMessage.notification?.body || 'You have a new notification'
-      );
-    });
-    
-    // Clean up when component unmounts
-    return unsubscribe;
-  }, []);
 
+export default function App() {
+  const navigationRef = useRef<any>(null);
+  
+  const handleNavigation = (screenName: string, params?: any) => {
+    console.log(`🔄 Navigating to ${screenName} with params:`, params);
+    
+    if (navigationRef.current) {
+      navigationRef.current.navigate(screenName, params);
+    } else {
+      console.log('⚠️ Navigation not ready yet');
+    }
+  };
+  
+  useEffect(() => {
+    let clickUnsubscribe: (() => void) | undefined;
+    
+    const setupNotifications = async () => {
+      // 1. Set navigation handler FIRST
+      notificationService.setNavigationHandler(handleNavigation);
+      
+      // 2. Initialize notification service
+      clickUnsubscribe = await notificationService.initialize();
+      
+      // 3. Setup notification listeners
+      messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+        console.log('📱 Background notification received!');
+        await notificationService.showNotification(
+          remoteMessage.notification?.title || 'New Message',
+          remoteMessage.notification?.body || 'You have a new notification',
+          remoteMessage.data
+        );
+      });
+      
+      const messageUnsubscribe = messaging().onMessage(async (remoteMessage) => {
+        console.log('📱 Foreground notification received!');
+        await notificationService.showNotification(
+          remoteMessage.notification?.title || 'New Message',
+          remoteMessage.notification?.body || 'You have a new notification',
+          remoteMessage.data
+        );
+      });
+      
+      return messageUnsubscribe;
+    };
+    
+    setupNotifications().then((messageUnsubscribe) => {
+      return () => {
+        if (clickUnsubscribe) clickUnsubscribe();
+        if (messageUnsubscribe) messageUnsubscribe();
+      };
+    });
+  }, []);
+  
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <AppProvider>
-          <RootNavigator />
+          {/* Single NavigationContainer at root */}
+          <NavigationContainer 
+            ref={navigationRef} 
+            onReady={() => {
+              console.log('🧭 Navigation is ready!');
+            }}
+          >
+            <RootNavigator />
+          </NavigationContainer>
         </AppProvider>
       </AuthProvider>
     </QueryClientProvider>
