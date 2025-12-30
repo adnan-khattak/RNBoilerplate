@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "169503557600",
+    "project_id": "rnboilerplate-bc20f",
+    "storage_bucket": "rnboilerplate-bc20f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169503557600:android:2ba89e781650d27ea84d85",
+        "android_client_info": {
+          "package_name": "com.rnboilerplate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDR_5crLArs8f4dKmnEUS9j9viDItdhNQs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
