@@ -147,6 +147,30 @@ class Notification {
       console.log('Error checking initial notification:', error);
     }
   }
+
+  // src/services/SimpleNotification.ts
+setupBackgroundEventHandler() {
+  console.log('Setting up background event handler...');
+  
+  // Listen for events when the app is in the background
+  notifee.onBackgroundEvent(async ({ type, detail }) => {
+    if (type === EventType.PRESS) {
+      console.log('🎯 Notification pressed while app is in background!');
+      
+      // Extract the notification data from the event
+      const notificationData = detail.notification?.data;
+      console.log('Notification data:', notificationData);
+      
+      if (notificationData && Object.keys(notificationData).length > 0) {
+        // Handle the click based on data
+        this.handleNotificationClick(notificationData);
+      } else {
+        console.log('⚠️ No data in notification!');
+      }
+    }
+  });
+}
+
   
   // UPDATE initialize method
   async initialize() {
@@ -168,6 +192,8 @@ class Notification {
     // Step 5: Setup click listener
     const clickUnsubscribe = this.setupNotificationClicks();
     
+    this.setupBackgroundEventHandler();
+
     console.log('✅ Notification system ready!');
     
     // Return cleanup function
