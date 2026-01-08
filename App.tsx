@@ -7,14 +7,15 @@ import { AppProvider } from './src/state/AppContext';
 import { AuthProvider } from './src/state/AuthContext';
 import notificationService from '@services/notification/Notification';
 import messaging from '@react-native-firebase/messaging';
-
+import { useNetInfo } from "@react-native-community/netinfo";
+import { NetworkBanner } from './src/components/NetworkBanner';
 const queryClient = new QueryClient();
 
 export default function App() {
   const navigationRef = useRef<any>(null);
-  
+  const netInfo = useNetInfo();
   const handleNavigation = (screenName: string, params?: any) => {
-    console.log(`🔄 Navigating to ${screenName} with params:`, params);
+  
     
     if (navigationRef.current) {
       navigationRef.current.navigate(screenName, params);
@@ -25,7 +26,8 @@ export default function App() {
   
   useEffect(() => {
     let clickUnsubscribe: (() => void) | undefined;
-    
+      console.log('🌐 Network status:', netInfo.isConnected ? 'Online' : 'Offline');
+    console.log('COnnection type:', netInfo.type);
     const setupNotifications = async () => {
       // 1. Set navigation handler FIRST
       notificationService.setNavigationHandler(handleNavigation);
@@ -35,6 +37,11 @@ export default function App() {
       
       // 3. Setup notification listeners
       messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+        const permissionGranted = await notificationService.hasPermission();
+        if (!permissionGranted) {
+          console.log('⚠️ Notification permission denied. Notification will not be shown.');
+          return; // Early exit if permission is denied
+        }
         console.log('📱 Background notification received!');
         await notificationService.showNotification(
           remoteMessage.notification?.title || 'New Message',
@@ -44,6 +51,11 @@ export default function App() {
       });
       
       const messageUnsubscribe = messaging().onMessage(async (remoteMessage) => {
+        const permissionGranted = await notificationService.hasPermission();
+        if (!permissionGranted) {
+          console.log('⚠️ Notification permission denied. Notification will not be shown.');
+          return; // Early exit if permission is denied
+        }
         console.log('📱 Foreground notification received!');
         await notificationService.showNotification(
           remoteMessage.notification?.title || 'New Message',
@@ -67,6 +79,9 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <AppProvider>
+          {/* Network status banner */}
+          <NetworkBanner isConnected={netInfo.isConnected} />
+          
           {/* Single NavigationContainer at root */}
           <NavigationContainer 
             ref={navigationRef} 

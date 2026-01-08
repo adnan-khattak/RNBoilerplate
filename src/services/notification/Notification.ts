@@ -1,6 +1,7 @@
 // src/services/SimpleNotification.ts
 import messaging from '@react-native-firebase/messaging';
-import notifee, {EventType} from '@notifee/react-native';
+import notifee, {AuthorizationStatus, EventType} from '@notifee/react-native';
+import { Linking, Platform } from 'react-native';
 
 class Notification {
   private navigationHandler: ((screen: string, params?: any) => void) | null = null;
@@ -8,23 +9,39 @@ class Notification {
   async askForPermission() {
     try {
       console.log('Asking for notification permission...');
-      
-      // For iOS & Android
-      const permission = await messaging().requestPermission();
-      
-      // Check if permission granted
-      const granted = 
-        permission === messaging.AuthorizationStatus.AUTHORIZED ||
-        permission === messaging.AuthorizationStatus.PROVISIONAL;
-      
+
+      // Request via both Firebase Messaging and Notifee (Android 13+ runtime permission)
+      const [messagingStatus, notifeeSettings] = await Promise.all([
+        messaging().requestPermission(),
+        notifee.requestPermission(),
+      ]);
+
+      const messagingGranted =
+        messagingStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        messagingStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      const notifeeGranted =
+        notifeeSettings.authorizationStatus === AuthorizationStatus.AUTHORIZED ||
+        notifeeSettings.authorizationStatus === AuthorizationStatus.PROVISIONAL;
+
+      const systemDisabled =
+        Platform.OS === 'android' && notifeeSettings.android?.areNotificationsEnabled === false;
+
+      const granted = messagingGranted && notifeeGranted && !systemDisabled;
+
       if (granted) {
         console.log('✅ Permission granted!');
         return true;
+      }
+
+      if (systemDisabled) {
+        console.log('❌ Permission denied at system level; opening settings');
+        await notifee.openNotificationSettings();
       } else {
         console.log('❌ Permission denied');
-        return false;
       }
-      
+
+      return false;
     } catch (error) {
       console.log('Error asking permission:', error);
       return false;
@@ -52,9 +69,18 @@ class Notification {
     });
   }
 
-  // 4. SHOW A NOTIFICATION (UPDATED - Add data parameter)
+   // 4. SHOW A NOTIFICATION (UPDATED - Add data parameter)
   async showNotification(title: string, body: string, data?: any) {
+    // 1. First check if permission is granted
+    const permissionGranted = await this.hasPermission();
+    if (!permissionGranted) {
+      // If permission is not granted, log and return early
+      console.log('⚠️ Notification permission denied. Notification will not be shown.');
+      return; // Early exit, no need to display notification
+    }
+
     try {
+      // If permission is granted, display the notification
       await notifee.displayNotification({
         title: title,
         body: body,
@@ -71,7 +97,41 @@ class Notification {
       console.log('Error showing notification:', error);
     }
   }
-  
+
+  // Check notification permission before showing notification
+  async hasPermission() {
+    const [messagingStatus, notifeeSettings] = await Promise.all([
+      messaging().hasPermission(),
+      notifee.getNotificationSettings(),
+    ]);
+
+    const messagingGranted =
+      messagingStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      messagingStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    const notifeeGranted =
+      notifeeSettings.authorizationStatus === AuthorizationStatus.AUTHORIZED ||
+      notifeeSettings.authorizationStatus === AuthorizationStatus.PROVISIONAL;
+
+    const systemDisabled =
+      Platform.OS === 'android' && notifeeSettings.android?.areNotificationsEnabled === false;
+
+    return messagingGranted && notifeeGranted && !systemDisabled;
+  }
+
+  // Open the OS notification settings so the user can toggle permissions manually
+  async openPermissionSettings() {
+    try {
+      if (Platform.OS === 'android') {
+        await notifee.openNotificationSettings();
+      } else {
+        await Linking.openSettings();
+      }
+    } catch (error) {
+      console.log('Error opening notification settings:', error);
+    }
+  }
+
   // 6. SETUP NOTIFICATION CLICK LISTENER (NEW METHOD)
   setupNotificationClicks() {
     console.log('👆 Setting up notification click listener...');

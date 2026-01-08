@@ -151,6 +151,11 @@ export const STRINGS = {
     USER_ID: 'User ID',
     MEMBER_SINCE: 'Member Since',
     CUSTOMIZE_HINT: '💡 Customize this screen to add edit profile, change password, settings, etc.',
+    NOTIFICATIONS: 'Push Notifications',
+    NOTIFICATIONS_DESC: 'Control app notification permission.',
+    NOTIFICATIONS_DENIED: 'Notifications are blocked. Enable them in your device settings to stay updated.',
+    NOTIFICATIONS_DISABLE_INFO: 'To turn notifications off, use your device settings.',
+    OPEN_SETTINGS: 'Open Settings',
   },
 
   // Errors
@@ -174,6 +179,12 @@ export const STRINGS = {
     ERROR: 'Error',
     WARNING: 'Warning',
     INFO: 'Info',
+  },
+
+  // Network Status
+  NETWORK: {
+    OFFLINE: 'You are offline',
+    BACK_ONLINE: 'Back online',
   },
 } as const;
 

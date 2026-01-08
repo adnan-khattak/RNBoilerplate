@@ -3,8 +3,9 @@
  * Displays user information and logout option
  */
 
-import React, { useCallback } from 'react';
-import { View, ScrollView, Image, Alert } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, ScrollView, Image, Alert, Switch } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Button, Text, Card } from '@components';
@@ -12,12 +13,36 @@ import { useAuth } from '@state/AuthContext';
 import { COLORS, STRINGS } from '@config';
 import { layout, margins, paddings } from '@theme/styles';
 import { AppStackParamList } from '@navigation/types';
+import notificationService from '@services/notification/Notification';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Profile'>;
 
 export default function ProfileScreen({}: Props) {
   const { authState, signOut } = useAuth();
   const { user } = authState;
+  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean | null>(null);
+  const [isPermissionBusy, setIsPermissionBusy] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      const fetchPermission = async () => {
+        setIsPermissionBusy(true);
+        const granted = await notificationService.hasPermission();
+        if (isActive) {
+          setNotificationsEnabled(granted);
+          setIsPermissionBusy(false);
+        }
+      };
+
+      fetchPermission();
+
+      return () => {
+        isActive = false;
+      };
+    }, [])
+  );
 
   const handleLogout = useCallback(() => {
     Alert.alert(
@@ -35,6 +60,33 @@ export default function ProfileScreen({}: Props) {
       ]
     );
   }, [signOut]);
+
+  const handleToggleNotifications = useCallback(async (value: boolean) => {
+    if (value) {
+      setIsPermissionBusy(true);
+      const granted = await notificationService.askForPermission();
+      setNotificationsEnabled(granted);
+      setIsPermissionBusy(false);
+
+      if (!granted) {
+        // Direct user to system settings because app cannot force-enable permission
+        await notificationService.openPermissionSettings();
+      }
+      return;
+    }
+
+    Alert.alert(
+      STRINGS.PROFILE.NOTIFICATIONS,
+      STRINGS.PROFILE.NOTIFICATIONS_DISABLE_INFO,
+      [
+        { text: STRINGS.COMMON.CANCEL, style: 'cancel' },
+        {
+          text: STRINGS.PROFILE.OPEN_SETTINGS,
+          onPress: () => notificationService.openPermissionSettings(),
+        },
+      ]
+    );
+  }, []);
 
   if (!user) {
     return (
@@ -103,6 +155,27 @@ export default function ProfileScreen({}: Props) {
             </Text>
           </View>
         )}
+      </Card>
+
+      {/* Notification Permission Toggle */}
+      <Card variant="outlined" style={margins.mbLg}>
+        <View style={[layout.rowBetween, { alignItems: 'center' }]}> 
+          <View style={{ flex: 1, marginRight: 12 }}>
+            <Text variant="label" color="muted" style={margins.mbXs}>
+              {STRINGS.PROFILE.NOTIFICATIONS}
+            </Text>
+            <Text variant="body" color="muted">
+              {STRINGS.PROFILE.NOTIFICATIONS_DESC}
+            </Text>
+          </View>
+          <Switch
+            value={Boolean(notificationsEnabled)}
+            onValueChange={handleToggleNotifications}
+            disabled={notificationsEnabled === null || isPermissionBusy}
+            trackColor={{ true: COLORS.primary, false: COLORS.gray300 }}
+            thumbColor={COLORS.white}
+          />
+        </View>
       </Card>
 
       {/* Actions */}
