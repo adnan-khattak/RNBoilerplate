@@ -3,8 +3,9 @@ import { View, ScrollView, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Button, Text, ErrorState } from '@components';
+import { Button, Text, ErrorState, Loading } from '@components';
 import { deleteItem } from '@services/api';
+import { useItem } from '@services/hooks';
 import { STRINGS } from '@config';
 import { colors, spacing, borderRadius } from '@theme';
 import {
@@ -20,7 +21,11 @@ import { formatDate, formatCurrency } from '@utils/helpers';
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
 export default function DetailScreen({ navigation, route }: Props) {
-  const item = (route as any)?.params?.item as import('@services/api').Item | undefined;
+  const routeItem = (route as any)?.params?.item;
+  const itemId = routeItem?.id;
+  
+  // Fetch item from cache/API for offline support and real-time updates
+  const { data: item, isLoading, error, refetch } = useItem(itemId);
   const queryClient = useQueryClient();
   /* ------------------ DELETE MUTATION ------------------ */
   const deleteMutation = useMutation({
@@ -34,14 +39,22 @@ export default function DetailScreen({ navigation, route }: Props) {
     },
   });
 
-  if (!item) {
+  if (isLoading) {
+    return (
+      <View style={layout.containerCentered}>
+        <Loading />
+      </View>
+    );
+  }
+
+  if (error || !item) {
     return (
       <View style={layout.container}>
         <ErrorState
           title={STRINGS.ALERTS.ERROR}
-          message={STRINGS.ERRORS.UNKNOWN}
-          onRetry={() => navigation.goBack()}
-          retryLabel={STRINGS.COMMON.BACK}
+          message={error?.message || STRINGS.ERRORS.UNKNOWN}
+          onRetry={refetch}
+          retryLabel={STRINGS.COMMON.RETRY}
         />
       </View>
     );

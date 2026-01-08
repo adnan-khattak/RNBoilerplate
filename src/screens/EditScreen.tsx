@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -9,8 +9,9 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Button, Text, Input } from '@components';
+import { Button, Text, Input, Loading } from '@components';
 import { updateItem, Item } from '@services/api';
+import { useItem } from '@services/hooks';
 import { STRINGS } from '@config';
 import { layout, margins, paddings } from '@theme/styles';
 import { RootStackParamList } from '@navigation/types';
@@ -18,14 +19,28 @@ import { RootStackParamList } from '@navigation/types';
 type Props = NativeStackScreenProps<RootStackParamList, 'Edit'>;
 
 export default function EditScreen({ navigation, route }: Props) {
-  const { item } = route.params;
+  const routeItem = route.params?.item;
+  const itemId = routeItem?.id;
+  
+  // Fetch item from cache/API for offline support and real-time updates
+  const { data: fetchedItem, isLoading } = useItem(itemId);
+  const item = fetchedItem || routeItem;
   const queryClient = useQueryClient();
 
   /* ------------------ FORM STATE ------------------ */
-  const [name, setName] = useState(item.name || '');
-  const [description, setDescription] = useState(item.description || '');
-  const [price, setPrice] = useState(item.price?.toString() || '');
+  const [name, setName] = useState(item?.name || '');
+  const [description, setDescription] = useState(item?.description || '');
+  const [price, setPrice] = useState(item?.price?.toString() || '');
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
+
+  // Update form when item is fetched
+  useEffect(() => {
+    if (item) {
+      setName(item.name || '');
+      setDescription(item.description || '');
+      setPrice(item.price?.toString() || '');
+    }
+  }, [item]);
 
   /* ------------------ UPDATE MUTATION ------------------ */
   const updateMutation = useMutation({
@@ -74,9 +89,9 @@ export default function EditScreen({ navigation, route }: Props) {
 
   const hasChanges = useCallback(() => {
     return (
-      name !== item.name ||
-      description !== item.description ||
-      price !== (item.price?.toString() || '')
+      name !== item?.name ||
+      description !== item?.description ||
+      price !== (item?.price?.toString() || '')
     );
   }, [description, item, name, price]);
 
@@ -85,66 +100,73 @@ export default function EditScreen({ navigation, route }: Props) {
       style={layout.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        style={layout.container}
-        contentContainerStyle={[paddings.pBase, paddings.pbXl]}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Header */}
-        <View style={margins.mbXl}>
-          <Text variant="h3">{STRINGS.EDIT.TITLE}</Text>
-          <Text variant="body" color="muted" style={margins.mtXs}>
-            {STRINGS.EDIT.SUBTITLE}
-          </Text>
+      {isLoading && (
+        <View style={layout.containerCentered}>
+          <Loading />
         </View>
+      )}
+      {!isLoading && (
+        <ScrollView
+          style={layout.container}
+          contentContainerStyle={[paddings.pBase, paddings.pbXl]}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Header */}
+          <View style={margins.mbXl}>
+            <Text variant="h3">{STRINGS.EDIT.TITLE}</Text>
+            <Text variant="body" color="muted" style={margins.mtXs}>
+              {STRINGS.EDIT.SUBTITLE}
+            </Text>
+          </View>
 
-        {/* Form */}
-        <View style={margins.mbXl}>
-          <Input
-            label={STRINGS.FORM.NAME}
-            value={name}
-            onChangeText={setName}
-            error={errors.name}
-            required
-          />
+          {/* Form */}
+          <View style={margins.mbXl}>
+            <Input
+              label={STRINGS.FORM.NAME}
+              value={name}
+              onChangeText={setName}
+              error={errors.name}
+              required
+            />
 
-          <Input
-            label={STRINGS.FORM.DESCRIPTION}
-            value={description}
-            onChangeText={setDescription}
-            error={errors.description}
-            multiline
-            required
-          />
+            <Input
+              label={STRINGS.FORM.DESCRIPTION}
+              value={description}
+              onChangeText={setDescription}
+              error={errors.description}
+              multiline
+              required
+            />
 
-          <Input
-            label={STRINGS.FORM.PRICE_OPTIONAL}
-            value={price}
-            onChangeText={setPrice}
-            keyboardType="decimal-pad"
-            helperText={STRINGS.CREATE.PRICE_HELPER}
-          />
-        </View>
+            <Input
+              label={STRINGS.FORM.PRICE_OPTIONAL}
+              value={price}
+              onChangeText={setPrice}
+              keyboardType="decimal-pad"
+              helperText={STRINGS.CREATE.PRICE_HELPER}
+            />
+          </View>
 
-        {/* Actions */}
-        <View style={margins.mtLg}>
-          <Button
-            title={STRINGS.EDIT.SAVE_CHANGES}
-            fullWidth
-            loading={updateMutation.isPending}
-            disabled={!hasChanges()}
-            onPress={handleSubmit}
-            style={margins.mbMd}
-          />
-          <Button
-            title={STRINGS.COMMON.CANCEL}
-            variant="ghost"
-            fullWidth
-            onPress={() => navigation.goBack()}
-            disabled={updateMutation.isPending}
-          />
-        </View>
-      </ScrollView>
+          {/* Actions */}
+          <View style={margins.mtLg}>
+            <Button
+              title={STRINGS.EDIT.SAVE_CHANGES}
+              fullWidth
+              loading={updateMutation.isPending}
+              disabled={!hasChanges()}
+              onPress={handleSubmit}
+              style={margins.mbMd}
+            />
+            <Button
+              title={STRINGS.COMMON.CANCEL}
+              variant="ghost"
+              fullWidth
+              onPress={() => navigation.goBack()}
+              disabled={updateMutation.isPending}
+            />
+          </View>
+        </ScrollView>
+      )}
     </KeyboardAvoidingView>
   );
 }
