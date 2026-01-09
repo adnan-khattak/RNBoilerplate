@@ -3,7 +3,7 @@
  * Email/password login form
  */
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
+import { Analytics } from '@services/analyticsService';
 import { Button, Text, Input } from '@components';
 import { useAuth } from '@state/AuthContext';
 import { COLORS, STRINGS, VALIDATION } from '@config';
@@ -48,18 +48,26 @@ export default function SignInScreen({ navigation }: Props) {
     return Object.keys(newErrors).length === 0;
   }, [email, password]);
 
-  const handleSignIn = useCallback(async () => {
-    if (!validate()) return;
+const handleSignIn = useCallback(async () => {
+  if (!validate()) return;
 
-    try {
-      await signIn({ email: email.trim(), password });
-    } catch (error) {
-      Alert.alert(
-        STRINGS.AUTH.SIGN_IN_FAILED,
-        error instanceof Error ? error.message : STRINGS.ERRORS.UNKNOWN
-      );
-    }
-  }, [email, password, signIn, validate]);
+  // 🔹 simple analytics event
+  Analytics.event("login_button_pressed");
+
+  try {
+    await signIn({ email: email.trim(), password });
+  } catch (error) {
+    Alert.alert(
+      STRINGS.AUTH.SIGN_IN_FAILED,
+      error instanceof Error ? error.message : STRINGS.ERRORS.UNKNOWN
+    );
+  }
+}, [email, password, signIn, validate]);
+
+useEffect(() => {
+  Analytics.screen("Auth_Login");
+}, []);
+
 
   const isLoading = authState.status === 'checking';
 
