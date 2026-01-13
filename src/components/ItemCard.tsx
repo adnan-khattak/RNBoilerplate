@@ -2,8 +2,8 @@ import React, { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Button, Text } from '@components';
 import { Item } from '@services/api';
-import { layout, margins, cardStyles } from '@theme/styles';
-import { spacing } from '@theme';
+import { useTheme, spacing } from '@theme';
+import { layout, margins } from '@theme/styles';
 import { STRINGS } from '@config';
 
 interface Props {
@@ -14,9 +14,20 @@ interface Props {
 }
 
 const ItemCard = ({ item, onView, onEdit, onDelete }: Props) => {
+  const { colors } = useTheme();
+
   return (
     <TouchableOpacity
-      style={[cardStyles.base, margins.mbMd]}
+      style={[
+        {
+          backgroundColor: colors.card,
+          borderRadius: 12,
+          padding: spacing.base,
+          borderWidth: 1,
+          borderColor: colors.cardBorder,
+        },
+        margins.mbMd,
+      ]}
       activeOpacity={0.7}
       onPress={() => onView(item)}
     >

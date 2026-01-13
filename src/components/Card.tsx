@@ -5,8 +5,8 @@
 
 import React, {memo} from 'react';
 import { View, ViewStyle, StyleProp, TouchableOpacity } from 'react-native';
-import { spacing } from '@theme';
-import { cardStyles } from '@theme/styles';
+import { spacing, useTheme } from '@theme';
+import { shadows, borderRadius } from '@theme/theme';
 
 interface CardProps {
   children: React.ReactNode;
@@ -23,11 +23,19 @@ export const Card: React.FC<CardProps> = ({
   style,
   padding = 'base',
 }) => {
+  const { colors } = useTheme();
+
   const cardStyle = [
-    cardStyles.base,
-    { padding: spacing[padding] },
-    variant === 'elevated' && cardStyles.elevated,
-    variant === 'outlined' && cardStyles.flat,
+    {
+      backgroundColor: colors.card,
+      borderRadius: borderRadius.lg,
+      padding: spacing[padding],
+    },
+    variant === 'elevated' && shadows.md,
+    variant === 'outlined' && {
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+    },
     style,
   ];
 

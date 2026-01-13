@@ -5,14 +5,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Text, ItemCard } from '@components';
 import { deleteItem, Item } from '@services/api';
 import { useAuth } from '@state/AuthContext';
-import { COLORS, STRINGS } from '@config';
-import { layout, margins, paddings, borderStyles, imageStyles, avatarStyles, headerStyles, contentStyles } from '@theme/styles';
+import { useTheme, spacing } from '@theme';
+import { STRINGS } from '@config';
+import { layout, margins, paddings, imageStyles, avatarStyles, contentStyles } from '@theme/styles';
 import { AppStackParamList } from '@navigation/types';
 import { useItems } from '@services/hooks';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Home'>;
 const ITEM_HEIGHT = 160;
 export default function HomeScreen({ navigation }: Props) {
+  const { colors } = useTheme();
    const {
     data: items = [],
     isLoading,
@@ -123,16 +125,19 @@ export default function HomeScreen({ navigation }: Props) {
   const { authState } = useAuth();
   const user = authState.user;
   return (
-    <SafeAreaView style={layout.container}>
+    <SafeAreaView style={[layout.container, { backgroundColor: colors.background }]}>
       {/* Header */}
        <View
         style={[
           layout.rowBetween,
           paddings.pxBase,
           paddings.pyMd,
-          borderStyles.borderBottom,
-          headerStyles.container,
-          headerStyles.topPadding,
+          { 
+            backgroundColor: colors.surface,
+            borderBottomWidth: 1,
+            borderBottomColor: colors.border,
+            paddingTop: spacing.lg,
+          },
         ]}
       >
         <View style={layout.rowCenter}>
@@ -188,7 +193,7 @@ export default function HomeScreen({ navigation }: Props) {
           <RefreshControl
             refreshing={isFetching}
             onRefresh={onRefresh}
-            tintColor={COLORS.primary}
+            tintColor={colors.primary}
           />
         }
         showsVerticalScrollIndicator={false}

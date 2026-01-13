@@ -10,7 +10,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Button, Text, Input } from '@components';
-import { createItem, Item } from '@services/api';
+import { createItem } from '@services/api';
+import { useTheme } from '@theme';
 import { STRINGS } from '@config';
 import { layout, margins, paddings } from '@theme/styles';
 import { RootStackParamList } from '@navigation/types';
@@ -19,6 +20,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Create'>;
 
 export default function CreateScreen({ navigation }: Props) {
   const queryClient = useQueryClient();
+  const { colors } = useTheme();
 
   /* ------------------ FORM STATE ------------------ */
   const [name, setName] = useState('');
@@ -73,17 +75,21 @@ export default function CreateScreen({ navigation }: Props) {
 
   return (
     <KeyboardAvoidingView
-      style={layout.container}
+      style={[layout.container, { backgroundColor: colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        style={layout.container}
+        style={[layout.container, { backgroundColor: colors.background }]}
         contentContainerStyle={[paddings.pBase, paddings.pbXl]}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Header */}
-        <View style={margins.mbXl}>
-          <Text variant="h3">{STRINGS.CREATE.HEADER}</Text>
+        {/* Dark Header */}
+        <View style={[
+          layout.columnCenter,
+          margins.mbXl,
+          { backgroundColor: colors.surface, padding: 16, borderRadius: 12 }
+        ]}>
+          <Text variant="h3" style={{ color: colors.text }}>{STRINGS.CREATE.HEADER}</Text>
           <Text variant="body" color="muted" style={margins.mtXs}>
             {STRINGS.CREATE.SUBTITLE}
           </Text>

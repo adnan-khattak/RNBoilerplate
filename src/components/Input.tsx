@@ -15,7 +15,7 @@ import {
   TextInputProps,
   TouchableOpacity,
 } from 'react-native';
-import { colors } from '@theme';
+import { useTheme } from '@theme';
 import { inputStyles } from '@theme/styles';
 
 interface InputProps extends Omit<TextInputProps, 'style'> {
@@ -47,6 +47,7 @@ const Input: React.FC<InputProps> = ({
   multiline,
   ...textInputProps
 }) => {
+  const { colors } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = (e: any) => {
@@ -84,7 +85,7 @@ const Input: React.FC<InputProps> = ({
             inputStyle,
           ]}
           editable={!disabled}
-          placeholderTextColor={colors.gray[400]}
+          placeholderTextColor={colors.inputPlaceholder}
           onFocus={handleFocus}
           onBlur={handleBlur}
           multiline={multiline}

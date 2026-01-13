@@ -16,6 +16,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Button, Text, Input } from '@components';
 import { useAuth } from '@state/AuthContext';
+import { useTheme } from '@theme';
 import { STRINGS, VALIDATION } from '@config';
 import { layout, margins, paddings } from '@theme/styles';
 import { AuthStackParamList } from '@navigation/types';
@@ -24,6 +25,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
 
 export default function SignUpScreen({ navigation }: Props) {
   const { signUp, authState } = useAuth();
+  const { colors } = useTheme();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -88,11 +90,11 @@ export default function SignUpScreen({ navigation }: Props) {
 
   return (
     <KeyboardAvoidingView
-      style={layout.container}
+      style={[layout.container, { backgroundColor: colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        style={layout.container}
+        style={[layout.container, { backgroundColor: colors.background }]}
         contentContainerStyle={[paddings.pBase, paddings.p2xl]}
         keyboardShouldPersistTaps="handled"
       >

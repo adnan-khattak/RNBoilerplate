@@ -7,12 +7,12 @@
  * - Modify screen options for custom headers
  */
 import React, { Suspense } from 'react';
-// REMOVED: import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View } from 'react-native';
 
 import { useAuth } from '@state/AuthContext';
-import { COLORS, STRINGS } from '@config';
+import { useTheme } from '@theme';
+import { STRINGS } from '@config';
 import { AuthStackParamList, AppStackParamList } from '@navigation/types';
 
 // Auth Screens
@@ -29,24 +29,46 @@ const DetailScreen = React.lazy(() => import('@screens/DetailScreen'));
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const AppStack = createNativeStackNavigator<AppStackParamList>();
 
-// Shared screen options
-const screenOptions = {
-  headerStyle: {
-    backgroundColor: COLORS.white,
-  },
-  headerTintColor: COLORS.primary,
-  headerTitleStyle: {
-    fontWeight: '600' as const,
-  },
-  contentStyle: {
-    backgroundColor: COLORS.backgroundSecondary,
-  },
-};
+/**
+ * Loading Screen - Shown while checking auth state
+ */
+function LoadingScreen() {
+  const { colors } = useTheme();
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.background,
+      }}
+    >
+      <ActivityIndicator size="large" color={colors.primary} />
+    </View>
+  );
+}
 
 /**
  * Auth Navigator - Shown when user is not authenticated
  */
 function AuthNavigator() {
+  const { colors } = useTheme();
+
+  const screenOptions = {
+    headerStyle: {
+      backgroundColor: colors.surface,
+    },
+    headerTintColor: colors.primary,
+    headerTitleStyle: {
+      fontWeight: '600' as const,
+      color: colors.text,
+    },
+    contentStyle: {
+      backgroundColor: colors.background,
+    },
+  };
+
   return (
     <AuthStack.Navigator
       screenOptions={{
@@ -64,6 +86,22 @@ function AuthNavigator() {
  * App Navigator - Shown when user is authenticated
  */
 function AppNavigator() {
+  const { colors } = useTheme();
+
+  const screenOptions = {
+    headerStyle: {
+      backgroundColor: colors.surface,
+    },
+    headerTintColor: colors.primary,
+    headerTitleStyle: {
+      fontWeight: '600' as const,
+      color: colors.text,
+    },
+    contentStyle: {
+      backgroundColor: colors.background,
+    },
+  };
+
   return (
     <AppStack.Navigator initialRouteName="Home" screenOptions={screenOptions}>
       <AppStack.Screen
@@ -89,6 +127,7 @@ function AppNavigator() {
           </Suspense>
         )}
       </AppStack.Screen>
+
       <AppStack.Screen name="Edit" options={{ title: STRINGS.EDIT.TITLE }}>
         {props => (
           <Suspense fallback={<LoadingScreen />}>
@@ -96,6 +135,7 @@ function AppNavigator() {
           </Suspense>
         )}
       </AppStack.Screen>
+
       <AppStack.Screen name="Detail" options={{ title: STRINGS.DETAIL.TITLE }}>
         {props => (
           <Suspense fallback={<LoadingScreen />}>
@@ -104,24 +144,6 @@ function AppNavigator() {
         )}
       </AppStack.Screen>
     </AppStack.Navigator>
-  );
-}
-
-/**
- * Loading Screen - Shown while checking auth state
- */
-function LoadingScreen() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: COLORS.background,
-      }}
-    >
-      <ActivityIndicator size="large" color={COLORS.primary} />
-    </View>
   );
 }
 
@@ -136,7 +158,6 @@ export default function RootNavigator() {
     return <LoadingScreen />;
   }
 
-  // REMOVED: NavigationContainer wrapper
   return authState.status === 'authenticated' ? (
     <AppNavigator />
   ) : (

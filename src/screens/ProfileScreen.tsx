@@ -10,7 +10,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Button, Text, Card } from '@components';
 import { useAuth } from '@state/AuthContext';
-import { COLORS, STRINGS } from '@config';
+import { useTheme } from '@theme';
+import { STRINGS } from '@config';
 import { layout, margins, paddings } from '@theme/styles';
 import { AppStackParamList } from '@navigation/types';
 import notificationService from '@services/notification/Notification';
@@ -19,6 +20,7 @@ type Props = NativeStackScreenProps<AppStackParamList, 'Profile'>;
 
 export default function ProfileScreen({}: Props) {
   const { authState, signOut } = useAuth();
+  const { colors, isDark, toggleTheme } = useTheme();
   const { user } = authState;
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean | null>(null);
   const [isPermissionBusy, setIsPermissionBusy] = useState(false);
@@ -95,12 +97,20 @@ export default function ProfileScreen({}: Props) {
       </View>
     );
   }
-
   return (
     <ScrollView
-      style={layout.container}
+      style={[layout.container, { backgroundColor: colors.background }]}
       contentContainerStyle={[paddings.pBase, paddings.pbXl]}
     >
+      {/* Dark Header */}
+      <View style={[
+        layout.center, 
+        margins.mbXl,
+        { backgroundColor: colors.surface, padding: 16, borderRadius: 12 }
+      ]}>
+        <Text variant="h3" style={{ color: colors.text }}>Profile</Text>
+      </View>
+      
       {/* Avatar Section */}
       <View style={[layout.center, margins.mbXl]}>
         {user.avatar ? (
@@ -110,7 +120,7 @@ export default function ProfileScreen({}: Props) {
               width: 100,
               height: 100,
               borderRadius: 50,
-              backgroundColor: COLORS.gray200,
+              backgroundColor: colors.gray200,
             }}
           />
         ) : (
@@ -119,7 +129,7 @@ export default function ProfileScreen({}: Props) {
               width: 100,
               height: 100,
               borderRadius: 50,
-              backgroundColor: COLORS.primary,
+              backgroundColor: colors.primary,
               justifyContent: 'center',
               alignItems: 'center',
             }}
@@ -157,6 +167,26 @@ export default function ProfileScreen({}: Props) {
         )}
       </Card>
 
+      {/* Dark Mode Toggle */}
+      <Card variant="outlined" style={margins.mbLg}>
+        <View style={[layout.rowBetween, { alignItems: 'center' }]}> 
+          <View style={{ flex: 1, marginRight: 12 }}>
+            <Text variant="label" color="muted" style={margins.mbXs}>
+              {STRINGS.PROFILE.DARK_MODE}
+            </Text>
+            <Text variant="body" color="muted">
+              {STRINGS.PROFILE.DARK_MODE_DESC}
+            </Text>
+          </View>
+          <Switch
+            value={isDark}
+            onValueChange={toggleTheme}
+            trackColor={{ true: colors.primary, false: colors.gray300 }}
+            thumbColor={colors.white}
+          />
+        </View>
+      </Card>
+
       {/* Notification Permission Toggle */}
       <Card variant="outlined" style={margins.mbLg}>
         <View style={[layout.rowBetween, { alignItems: 'center' }]}> 
@@ -172,8 +202,8 @@ export default function ProfileScreen({}: Props) {
             value={Boolean(notificationsEnabled)}
             onValueChange={handleToggleNotifications}
             disabled={notificationsEnabled === null || isPermissionBusy}
-            trackColor={{ true: COLORS.primary, false: COLORS.gray300 }}
-            thumbColor={COLORS.white}
+            trackColor={{ true: colors.primary, false: colors.gray300 }}
+            thumbColor={colors.white}
           />
         </View>
       </Card>
@@ -189,7 +219,7 @@ export default function ProfileScreen({}: Props) {
       </View>
 
       {/* Customization hint */}
-      <View style={[margins.mtXl, paddings.pMd, { backgroundColor: COLORS.backgroundSecondary, borderRadius: 12 }]}>
+      <View style={[margins.mtXl, paddings.pMd, { backgroundColor: colors.backgroundSecondary, borderRadius: 12 }]}>
         <Text variant="caption" color="muted" align="center">
           {STRINGS.PROFILE.CUSTOMIZE_HINT}
         </Text>

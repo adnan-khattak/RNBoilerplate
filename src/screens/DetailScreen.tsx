@@ -6,13 +6,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, Text, ErrorState, Loading } from '@components';
 import { deleteItem } from '@services/api';
 import { useItem } from '@services/hooks';
+import { useTheme, spacing, borderRadius } from '@theme';
 import { STRINGS } from '@config';
-import { colors, spacing, borderRadius } from '@theme';
 import {
   layout,
   margins,
   paddings,
-  cardStyles,
   dividerStyles,
 } from '@theme/styles';
 import { RootStackParamList } from '@navigation/types';
@@ -21,6 +20,7 @@ import { formatDate, formatCurrency } from '@utils/helpers';
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
 export default function DetailScreen({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const routeItem = (route as any)?.params?.item;
   const itemId = routeItem?.id;
   
@@ -84,11 +84,29 @@ export default function DetailScreen({ navigation, route }: Props) {
 
   return (
     <ScrollView
-      style={layout.container}
+      style={[layout.container, { backgroundColor: colors.background }]}
       contentContainerStyle={[paddings.pBase, paddings.pbXl]}
     >
+      {/* Dark Header */}
+      <View style={[
+        { backgroundColor: colors.surface, padding: 16, borderRadius: 12, marginBottom: 16 }
+      ]}>
+        <Text variant="h3" style={{ color: colors.text }}>Item Details</Text>
+      </View>
+      
       {/* Main Card */}
-      <View style={cardStyles.elevated}>
+      <View style={[
+        {
+          backgroundColor: colors.card,
+          borderRadius: borderRadius.lg,
+          padding: spacing.base,
+          shadowColor: colors.shadow,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.2,
+          shadowRadius: 8,
+          elevation: 5,
+        },
+      ]}>
         {/* Header */}
         <View style={layout.rowBetween}>
           <Text variant="h2" style={[layout.flex1, margins.mrMd]}>

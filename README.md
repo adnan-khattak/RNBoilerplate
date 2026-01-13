@@ -1,6 +1,6 @@
 # React Native CRUD Boilerplate
 
-A production-ready React Native boilerplate with **Authentication** and CRUD operations, featuring TypeScript, React Navigation, React Query, and a comprehensive theming system.
+This boilerplate is for production-ready React Native apps with auth, API, offline support, theming, notifications, and scalability.
 
 ## ✨ Features
 

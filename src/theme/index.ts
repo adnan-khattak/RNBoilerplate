@@ -2,7 +2,12 @@
  * Theme exports - Single entry point for all theme related imports
  */
 
-// Design tokens
+// Theme Context (NEW - for dark/light mode)
+export { ThemeProvider, useTheme } from './ThemeContext';
+export type { ColorScheme, ThemeColors } from './colors.theme';
+export { lightColors, darkColors } from './colors.theme';
+
+// Design tokens (legacy - still available)
 export {
   colors,
   spacing,

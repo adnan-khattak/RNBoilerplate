@@ -151,6 +151,8 @@ export const STRINGS = {
     USER_ID: 'User ID',
     MEMBER_SINCE: 'Member Since',
     CUSTOMIZE_HINT: '💡 Customize this screen to add edit profile, change password, settings, etc.',
+    DARK_MODE: 'Dark Mode',
+    DARK_MODE_DESC: 'Toggle between light and dark theme',
     NOTIFICATIONS: 'Push Notifications',
     NOTIFICATIONS_DESC: 'Control app notification permission.',
     NOTIFICATIONS_DENIED: 'Notifications are blocked. Enable them in your device settings to stay updated.',

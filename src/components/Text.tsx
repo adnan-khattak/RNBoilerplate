@@ -11,7 +11,7 @@ import {
   StyleProp,
   TextProps as RNTextProps,
 } from 'react-native';
-import { colors, typography } from '@theme';
+import { typography, useTheme } from '@theme';
 import { textStyles } from '@theme/styles';
 
 // Text variants
@@ -72,6 +72,7 @@ const Text: React.FC<TextProps> = ({
   children,
   ...textProps
 }) => {
+  const { colors } = useTheme();
   // Get variant styles
   const getVariantStyle = (): TextStyle => {
     switch (variant) {

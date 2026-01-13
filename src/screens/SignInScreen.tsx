@@ -16,7 +16,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Analytics } from '@services/analyticsService';
 import { Button, Text, Input } from '@components';
 import { useAuth } from '@state/AuthContext';
-import { COLORS, STRINGS, VALIDATION } from '@config';
+import { useTheme } from '@theme';
+import { STRINGS, VALIDATION } from '@config';
 import { layout, margins, paddings } from '@theme/styles';
 import { AuthStackParamList } from '@navigation/types';
 
@@ -24,6 +25,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'SignIn'>;
 
 export default function SignInScreen({ navigation }: Props) {
   const { signIn, authState } = useAuth();
+  const { colors } = useTheme();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -73,11 +75,11 @@ useEffect(() => {
 
   return (
     <KeyboardAvoidingView
-      style={layout.container}
+      style={[layout.container, { backgroundColor: colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        style={layout.container}
+        style={[layout.container, { backgroundColor: colors.background }]}
         contentContainerStyle={[paddings.pBase, { flexGrow: 1, justifyContent: 'center' }]}
         keyboardShouldPersistTaps="handled"
       >
@@ -136,7 +138,7 @@ useEffect(() => {
         </View>
 
         {/* Demo credentials hint */}
-        <View style={[margins.mtXl, paddings.pMd, { backgroundColor: COLORS.backgroundSecondary, borderRadius: 8 }]}>
+        <View style={[margins.mtXl, paddings.pMd, { backgroundColor: colors.backgroundSecondary, borderRadius: 8 }]}>
           <Text variant="caption" color="muted" align="center">
             Demo: Create an account or use existing MockAPI users
           </Text>

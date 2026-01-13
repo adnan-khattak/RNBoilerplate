@@ -6,7 +6,7 @@
 import React, {memo} from 'react';
 import { View, ActivityIndicator, ViewStyle, StyleProp } from 'react-native';
 import Text  from './Text';
-import { colors } from '@theme';
+import { useTheme } from '@theme';
 import { layout, paddings, margins } from '@theme/styles';
 
 interface LoadingProps {
@@ -20,13 +20,16 @@ interface LoadingProps {
 export const Loading: React.FC<LoadingProps> = ({
   message,
   size = 'large',
-  color = colors.primary,
+  color,
   fullScreen = false,
   style,
 }) => {
+  const { colors } = useTheme();
+  const spinnerColor = color || colors.primary;
+
   return (
     <View style={[paddings.pXl, layout.center, fullScreen && { ...layout.container, backgroundColor: colors.background }, style]}>
-      <ActivityIndicator size={size} color={color} />
+      <ActivityIndicator size={size} color={spinnerColor} />
       {message && (
         <Text variant="body" color="muted" style={margins.mtMd}>
           {message}

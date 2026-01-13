@@ -13,7 +13,7 @@ import {
   TextStyle,
   StyleProp,
 } from 'react-native';
-import { colors } from '@theme';
+import { useTheme } from '@theme';
 import { buttonStyles } from '@theme/styles';
 
 // Button variants
@@ -51,6 +51,8 @@ const Button: React.FC<ButtonProps> = ({
   textStyle,
   activeOpacity = 0.7,
 }) => {
+  const { colors } = useTheme();
+
   // Get variant styles
   const getVariantStyle = (): ViewStyle => {
     switch (variant) {

@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, Text, Input, Loading } from '@components';
 import { updateItem, Item } from '@services/api';
 import { useItem } from '@services/hooks';
+import { useTheme } from '@theme';
 import { STRINGS } from '@config';
 import { layout, margins, paddings } from '@theme/styles';
 import { RootStackParamList } from '@navigation/types';
@@ -19,6 +20,7 @@ import { RootStackParamList } from '@navigation/types';
 type Props = NativeStackScreenProps<RootStackParamList, 'Edit'>;
 
 export default function EditScreen({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const routeItem = route.params?.item;
   const itemId = routeItem?.id;
   
@@ -97,7 +99,7 @@ export default function EditScreen({ navigation, route }: Props) {
 
   return (
     <KeyboardAvoidingView
-      style={layout.container}
+      style={[layout.container, { backgroundColor: colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       {isLoading && (
@@ -107,13 +109,15 @@ export default function EditScreen({ navigation, route }: Props) {
       )}
       {!isLoading && (
         <ScrollView
-          style={layout.container}
+          style={[layout.container, { backgroundColor: colors.background }]}
           contentContainerStyle={[paddings.pBase, paddings.pbXl]}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Header */}
-          <View style={margins.mbXl}>
-            <Text variant="h3">{STRINGS.EDIT.TITLE}</Text>
+          {/* Dark Header */}
+          <View style={[
+            { backgroundColor: colors.surface, padding: 16, borderRadius: 12, marginBottom: 24 }
+          ]}>
+            <Text variant="h3" style={{ color: colors.text }}>{STRINGS.EDIT.TITLE}</Text>
             <Text variant="body" color="muted" style={margins.mtXs}>
               {STRINGS.EDIT.SUBTITLE}
             </Text>

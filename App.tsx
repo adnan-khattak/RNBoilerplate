@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import RootNavigator from './src/navigation/RootNavigator'; // Updated version without NavigationContainer
 import { AppProvider } from './src/state/AppContext';
 import { AuthProvider } from './src/state/AuthContext';
+import { ThemeProvider } from './src/theme';
 import notificationService from '@services/notification/Notification';
 import messaging from '@react-native-firebase/messaging';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -14,7 +15,7 @@ const queryClient = new QueryClient();
 
 export default function App() {
   const navigationRef = useRef<any>(null);
-  const routeNameRef = useRef<string | undefined>();
+  const routeNameRef = useRef<string | undefined>(undefined);
   const netInfo = useNetInfo();
   const handleNavigation = (screenName: string, params?: any) => {
     if (navigationRef.current) {
@@ -84,35 +85,37 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AppProvider>
-          {/* Network status banner */}
-          <NetworkBanner isConnected={netInfo.isConnected} />
+      <ThemeProvider>
+        <AuthProvider>
+          <AppProvider>
+            {/* Network status banner */}
+            <NetworkBanner isConnected={netInfo.isConnected} />
 
-          {/* Single NavigationContainer at root */}
-          <NavigationContainer
-            ref={navigationRef}
-            onReady={() => {
-              const route = navigationRef.current?.getCurrentRoute();
-              const name = route?.name;
-              routeNameRef.current = name;
-              if (name) Analytics.screen(name);
-
-              console.log('🧭 Navigation is ready!');
-            }}
-            onStateChange={async () => {
-              const route = navigationRef.current?.getCurrentRoute();
-              const name = route?.name;
-              if (name && routeNameRef.current !== name) {
+            {/* Single NavigationContainer at root */}
+            <NavigationContainer
+              ref={navigationRef}
+              onReady={() => {
+                const route = navigationRef.current?.getCurrentRoute();
+                const name = route?.name;
                 routeNameRef.current = name;
-                Analytics.screen(name);
-              }
-            }}
-          >
-            <RootNavigator />
-          </NavigationContainer>
-        </AppProvider>
-      </AuthProvider>
+                if (name) Analytics.screen(name);
+
+                console.log('🧭 Navigation is ready!');
+              }}
+              onStateChange={async () => {
+                const route = navigationRef.current?.getCurrentRoute();
+                const name = route?.name;
+                if (name && routeNameRef.current !== name) {
+                  routeNameRef.current = name;
+                  Analytics.screen(name);
+                }
+              }}
+            >
+              <RootNavigator />
+            </NavigationContainer>
+          </AppProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
