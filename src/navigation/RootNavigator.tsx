@@ -25,6 +25,7 @@ const ProfileScreen = React.lazy(() => import('@screens/ProfileScreen'));
 const CreateScreen = React.lazy(() => import('@screens/CreateScreen'));
 const EditScreen = React.lazy(() => import('@screens/EditScreen'));
 const DetailScreen = React.lazy(() => import('@screens/DetailScreen'));
+const QRScannerScreen = React.lazy(() => import('@screens/QRScannerScreen'));
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const AppStack = createNativeStackNavigator<AppStackParamList>();
@@ -140,6 +141,14 @@ function AppNavigator() {
         {props => (
           <Suspense fallback={<LoadingScreen />}>
             <DetailScreen {...props} />
+          </Suspense>
+        )}
+      </AppStack.Screen>
+
+      <AppStack.Screen name="QRScanner" options={{ title: 'Scan QR Code' }}>
+        {props => (
+          <Suspense fallback={<LoadingScreen />}>
+            <QRScannerScreen {...props} />
           </Suspense>
         )}
       </AppStack.Screen>

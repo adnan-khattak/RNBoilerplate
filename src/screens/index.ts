@@ -8,6 +8,7 @@ export { default as CreateScreen } from './CreateScreen';
 export { default as EditScreen } from './EditScreen';
 export { default as DetailScreen } from './DetailScreen';
 export { default as ProfileScreen } from './ProfileScreen';
+export { default as QRScannerScreen } from './QRScannerScreen';
 
 // Auth Screens
 export { default as SignInScreen } from './SignInScreen';

@@ -18,7 +18,7 @@ import { useLanguage, useTranslationHook } from '@services/hooks';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Profile'>;
 
-export default function ProfileScreen({}: Props) {
+export default function ProfileScreen({ navigation }: Props) {
   const { authState, signOut } = useAuth();
   const { colors, isDark, toggleTheme } = useTheme();
   const { user } = authState;
@@ -307,6 +307,13 @@ export default function ProfileScreen({}: Props) {
 
       {/* Actions */}
       <View style={margins.mtLg}>
+        <Button
+          title="Scan QR Code"
+          variant="primary"
+          fullWidth
+          onPress={() => navigation.navigate('QRScanner')}
+          style={margins.mbMd}
+        />
         <Button
           title={t('auth.signOut')}
           variant="danger"

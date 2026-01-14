@@ -20,6 +20,7 @@ export type AppStackParamList = {
   Create: undefined;
   Edit: { item: Item };
   Profile: undefined;
+  QRScanner: undefined;
 };
 
 // Combined type for useNavigation hook typing
