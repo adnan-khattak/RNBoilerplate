@@ -1,0 +1,126 @@
+{
+  "common": {
+    "ok": "حسناً",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "back": "رجوع",
+    "next": "التالي",
+    "retry": "إعادة المحاولة",
+    "submit": "إرسال",
+    "loading": "جار التحميل...",
+    "error": "خطأ",
+    "success": "نجاح"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "profile": "الملف الشخصي",
+    "create": "إنشاء",
+    "edit": "تعديل",
+    "detail": "التفاصيل"
+  },
+  "home": {
+    "title": "العناصر الخاصة بي",
+    "addNew": "إضافة جديد",
+    "viewButton": "عرض",
+    "deleteTitle": "حذف العنصر",
+    "deleteMessage": "هل أنت متأكد من حذف {{name}}؟",
+    "noItemsTitle": "لا توجد عناصر بعد",
+    "noItemsDescription": "ابدأ بإنشاء عنصرك الأول"
+  },
+  "profile": {
+    "title": "ملفي الشخصي",
+    "accountSettings": "إعدادات الحساب",
+    "accountInfo": "معلومات الحساب",
+    "userId": "معرف المستخدم",
+    "memberSince": "عضو منذ",
+    "darkMode": "الوضع الداكن",
+    "darkModeDesc": "تفعيل المظهر الداكن",
+    "notifications": "الإشعارات",
+    "notificationsDesc": "استلام إشعارات الدفع",
+    "notificationsDisableInfo": "لتعطيل الإشعارات، يرجى الانتقال إلى إعدادات الجهاز",
+    "openSettings": "فتح الإعدادات",
+    "language": "اللغة",
+    "languageDesc": "اختر لغتك المفضلة",
+    "theme": "المظهر",
+    "logout": "تسجيل الخروج",
+    "version": "إصدار التطبيق",
+    "customizeHint": "قم بتخصيص ملفك الشخصي وتفضيلاتك هنا",
+    "noResults": "لا توجد بيانات للمستخدم"
+  },
+  "auth": {
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "signOut": "تسجيل الخروج",
+    "signOutConfirm": "هل أنت متأكد من تسجيل الخروج؟",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "rememberMe": "تذكرني",
+    "noAccount": "ليس لديك حساب؟",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح",
+    "passwordTooShort": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+    "passwordMismatch": "كلمات المرور غير متطابقة"
+  },
+  "create": {
+    "title": "إنشاء عنصر جديد",
+    "header": "إنشاء عنصر جديد",
+    "subtitle": "املأ التفاصيل لإنشاء عنصر جديد",
+    "priceHelper": "أدخل السعر (اختياري)",
+    "success": "تم إنشاء العنصر بنجاح!",
+    "error": "فشل في إنشاء العنصر. يرجى المحاولة مرة أخرى."
+  },
+  "edit": {
+    "title": "تعديل العنصر",
+    "subtitle": "تحديث تفاصيل العنصر",
+    "saveChanges": "حفظ التغييرات",
+    "success": "تم تحديث العنصر بنجاح!",
+    "error": "فشل في تحديث العنصر. يرجى المحاولة مرة أخرى."
+  },
+  "detail": {
+    "title": "تفاصيل العنصر",
+    "created": "تاريخ الإنشاء",
+    "updated": "آخر تحديث",
+    "editButton": "تعديل العنصر",
+    "deleteButton": "حذف العنصر",
+    "deleteConfirm": "هل أنت متأكد من حذف {{name}}؟",
+    "error": "فشل في حذف العنصر. يرجى المحاولة مرة أخرى."
+  },
+  "form": {
+    "name": "الاسم",
+    "description": "الوصف",
+    "priceOptional": "السعر (اختياري)",
+    "email": "عنوان البريد الإلكتروني"
+  },
+  "validation": {
+    "nameRequired": "الاسم مطلوب",
+    "nameMinLength": "يجب أن يكون الاسم حرفين على الأقل",
+    "descriptionRequired": "الوصف مطلوب",
+    "descriptionMinLength": "يجب أن يكون الوصف 10 أحرف على الأقل"
+  },
+  "alerts": {
+    "error": "خطأ",
+    "success": "نجاح",
+    "confirm": "تأكيد"
+  },
+  "errors": {
+    "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+    "serverError": "خطأ في الخادم. يرجى المحاولة مرة أخرى لاحقاً.",
+    "unauthorized": "غير مصرح لك بتنفيذ هذا الإجراء.",
+    "notFound": "المورد غير موجود.",
+    "validation": "يرجى التحقق من إدخالك والمحاولة مرة أخرى.",
+    "unknownError": "حدث خطأ غير معروف. يرجى المحاولة مرة أخرى.",
+    "loadItems": "فشل تحميل العناصر",
+    "deleteItem": "فشل حذف العنصر",
+    "unknown": "حدث خطأ غير معروف"
+  },
+  "messages": {
+    "deleteConfirm": "هل أنت متأكد من حذف هذا العنصر؟",
+    "unsavedChanges": "لديك تغييرات غير محفوظة. هل تريد الحفظ؟",
+    "offline": "أنت غير متصل حالياً. قد تكون بعض الميزات محدودة.",
+    "online": "أنت متصل مرة أخرى."
+  }
+}

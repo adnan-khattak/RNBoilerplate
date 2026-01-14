@@ -4,7 +4,7 @@ import { Button, Text } from '@components';
 import { Item } from '@services/api';
 import { useTheme, spacing } from '@theme';
 import { layout, margins } from '@theme/styles';
-import { STRINGS } from '@config';
+import { useTranslationHook } from '@services/hooks';
 
 interface Props {
   item: Item;
@@ -15,6 +15,7 @@ interface Props {
 
 const ItemCard = ({ item, onView, onEdit, onDelete }: Props) => {
   const { colors } = useTheme();
+  const { t } = useTranslationHook();
 
   return (
     <TouchableOpacity
@@ -48,21 +49,21 @@ const ItemCard = ({ item, onView, onEdit, onDelete }: Props) => {
 
       <View style={[layout.row, { gap: spacing.sm }]}>
         <Button
-          title={STRINGS.HOME.VIEW}
+          title={t('home.viewButton')}
           variant="outline"
           size="small"
           onPress={() => onView(item)}
           style={layout.flex1}
         />
         <Button
-          title={STRINGS.COMMON.EDIT}
+          title={t('common.edit')}
           variant="secondary"
           size="small"
           onPress={() => onEdit(item)}
           style={layout.flex1}
         />
         <Button
-          title={STRINGS.COMMON.DELETE}
+          title={t('common.delete')}
           variant="danger"
           size="small"
           onPress={() => onDelete(item)}

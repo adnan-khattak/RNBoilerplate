@@ -12,11 +12,13 @@ import { initReactI18next } from 'react-i18next';
 import * as RNLocalize from 'react-native-localize';
 import en from '../../locales/en.json';
 import fr from '../../locales/fr.json';
+import ar from '../../locales/ar.json';
 
 // Language resources
 const resources = {
   en: { translation: en },
   fr: { translation: fr },
+  ar: { translation: ar },
 };
 
 // Get device language on first launch
@@ -35,11 +37,22 @@ export const getDeviceLanguage = (): string => {
   return 'en'; // Default fallback
 };
 
+// RTL languages
+const RTL_LANGUAGES = ['ar'];
+
+/**
+ * Check if language is RTL
+ */
+export const isRTL = (language: string): boolean => {
+  return RTL_LANGUAGES.includes(language);
+};
+
 // i18next configuration
 const i18nConfig: InitOptions = {
   compatibilityJSON: 'v4', // Required for JSON imports
   resources,
   fallbackLng: 'en',
+  supportedLngs: ['en', 'fr', 'ar'],
   ns: ['translation'],
   defaultNS: 'translation',
   interpolation: {

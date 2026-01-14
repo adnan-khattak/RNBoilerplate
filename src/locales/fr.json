@@ -23,6 +23,7 @@
   "home": {
     "title": "Mes éléments",
     "addNew": "Ajouter",
+    "viewButton": "Voir",
     "deleteTitle": "Supprimer l'élément",
     "deleteMessage": "Êtes-vous sûr de vouloir supprimer {{name}} ?",
     "noItemsTitle": "Aucun élément pour le moment",

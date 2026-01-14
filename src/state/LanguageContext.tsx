@@ -10,8 +10,10 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { initializeI18n, changeLanguage, getCurrentLanguage, getAvailableLanguages } from '@services/i18n/i18nConfig';
+import { I18nManager, Alert } from 'react-native';
+import { initializeI18n, changeLanguage, getCurrentLanguage, getAvailableLanguages, isRTL } from '@services/i18n/i18nConfig';
 import { languageStorageService } from '@services/languageStorage';
+import RNRestart from 'react-native-restart';
 
 interface LanguageContextType {
   language: string;
@@ -46,13 +48,21 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children, in
     const initializeLanguage = async () => {
       try {
         // Try to get saved language preference
-        let languageToUse = initialLanguage || await languageStorageService.getSavedLanguage();
+        let languageToUse = initialLanguage || await languageStorageService.getSavedLanguage() || undefined;
         
         // Initialize i18n with the selected language
         await initializeI18n(languageToUse);
         
         // Get the actual language that was set
         const currentLang = getCurrentLanguage();
+        
+        // Apply RTL if needed
+        const shouldBeRTL = isRTL(currentLang);
+        if (I18nManager.isRTL !== shouldBeRTL) {
+          I18nManager.allowRTL(true);
+          I18nManager.forceRTL(shouldBeRTL);
+        }
+        
         setLanguage(currentLang);
         setError(null);
         setIsInitialized(true);
@@ -76,6 +86,10 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children, in
         throw new Error(`Language '${newLanguage}' is not available`);
       }
 
+      const currentRTL = I18nManager.isRTL;
+      const newRTL = isRTL(newLanguage);
+      const needsRestart = currentRTL !== newRTL;
+
       // Change language in i18next
       await changeLanguage(newLanguage);
       
@@ -85,6 +99,17 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children, in
       // Update state
       setLanguage(newLanguage);
       setError(null);
+
+      // Handle RTL change
+      if (needsRestart) {
+        I18nManager.allowRTL(true);
+        I18nManager.forceRTL(newRTL);
+        
+        // Restart app to apply RTL changes
+        setTimeout(() => {
+          RNRestart.restart();
+        }, 100);
+      }
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to change language');
       console.error('Language change error:', error);

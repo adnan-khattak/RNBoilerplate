@@ -119,6 +119,7 @@ export default function ProfileScreen({}: Props) {
     const labels: Record<string, string> = {
       en: '🇬🇧 English',
       fr: '🇫🇷 Français',
+      ar: '🇸🇦 العربية',
     };
     return labels[lang] || lang.toUpperCase();
   };

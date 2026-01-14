@@ -23,6 +23,7 @@
   "home": {
     "title": "My Items",
     "addNew": "Add New",
+    "viewButton": "View",
     "deleteTitle": "Delete Item",
     "deleteMessage": "Are you sure you want to delete {{name}}?",
     "noItemsTitle": "No Items Yet",
