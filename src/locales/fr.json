@@ -1,0 +1,125 @@
+{
+  "common": {
+    "ok": "D'accord",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "retry": "Réessayer",
+    "submit": "Soumettre",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "profile": "Profil",
+    "create": "Créer",
+    "edit": "Modifier",
+    "detail": "Détails"
+  },
+  "home": {
+    "title": "Mes éléments",
+    "addNew": "Ajouter",
+    "deleteTitle": "Supprimer l'élément",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer {{name}} ?",
+    "noItemsTitle": "Aucun élément pour le moment",
+    "noItemsDescription": "Commencez par créer votre premier élément"
+  },
+  "profile": {
+    "title": "Mon Profil",
+    "accountSettings": "Paramètres du compte",
+    "accountInfo": "Informations du compte",
+    "userId": "Identifiant utilisateur",
+    "memberSince": "Membre depuis",
+    "darkMode": "Mode sombre",
+    "darkModeDesc": "Activer le thème sombre",
+    "notifications": "Notifications",
+    "notificationsDesc": "Recevoir des notifications push",
+    "notificationsDisableInfo": "Pour désactiver les notifications, veuillez accéder aux paramètres de votre appareil",
+    "openSettings": "Ouvrir les paramètres",
+    "language": "Langue",
+    "languageDesc": "Sélectionnez votre langue préférée",
+    "theme": "Thème",
+    "logout": "Se déconnecter",
+    "version": "Version de l'application",
+    "customizeHint": "Personnalisez votre profil et vos préférences ici",
+    "noResults": "Aucune donnée utilisateur disponible"
+  },
+  "auth": {
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "signOut": "Se déconnecter",
+    "signOutConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
+    "forgotPassword": "Mot de passe oublié ?",
+    "rememberMe": "Se souvenir de moi",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "invalidEmail": "Veuillez entrer un e-mail valide",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
+    "passwordMismatch": "Les mots de passe ne correspondent pas"
+  },
+  "create": {
+    "title": "Créer un nouvel élément",
+    "header": "Créer un nouvel élément",
+    "subtitle": "Remplissez les détails pour créer un nouvel élément",
+    "priceHelper": "Entrez le prix (optionnel)",
+    "success": "Élément créé avec succès !",
+    "error": "Échec de la création de l'élément. Veuillez réessayer."
+  },
+  "edit": {
+    "title": "Modifier l'élément",
+    "subtitle": "Mettre à jour les détails de l'élément",
+    "saveChanges": "Enregistrer les modifications",
+    "success": "Élément mis à jour avec succès !",
+    "error": "Échec de la mise à jour de l'élément. Veuillez réessayer."
+  },
+  "detail": {
+    "title": "Détails de l'élément",
+    "created": "Créé le",
+    "updated": "Dernière mise à jour",
+    "editButton": "Modifier l'élément",
+    "deleteButton": "Supprimer l'élément",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer {{name}} ?",
+    "error": "Échec de la suppression de l'élément. Veuillez réessayer."
+  },
+  "form": {
+    "name": "Nom",
+    "description": "Description",
+    "priceOptional": "Prix (Optionnel)",
+    "email": "Adresse e-mail"
+  },
+  "validation": {
+    "nameRequired": "Le nom est requis",
+    "nameMinLength": "Le nom doit contenir au moins 2 caractères",
+    "descriptionRequired": "La description est requise",
+    "descriptionMinLength": "La description doit contenir au moins 10 caractères"
+  },
+  "alerts": {
+    "error": "Erreur",
+    "success": "Succès",
+    "confirm": "Confirmer"
+  },
+  "errors": {
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "serverError": "Erreur serveur. Veuillez réessayer plus tard.",
+    "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+    "notFound": "Ressource non trouvée.",
+    "validation": "Veuillez vérifier votre saisie et réessayer.",
+    "unknownError": "Une erreur inconnue s'est produite. Veuillez réessayer.",
+    "loadItems": "Échec du chargement des éléments",
+    "deleteItem": "Échec de la suppression de l'élément",
+    "unknown": "Une erreur inconnue s'est produite"
+  },
+  "messages": {
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "unsavedChanges": "Vous avez des modifications non enregistrées. Voulez-vous enregistrer ?",
+    "offline": "Vous êtes actuellement hors ligne. Certaines fonctionnalités peuvent être limitées.",
+    "online": "Vous êtes de nouveau en ligne."
+  }
+}

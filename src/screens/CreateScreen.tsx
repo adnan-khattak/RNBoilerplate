@@ -12,15 +12,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, Text, Input } from '@components';
 import { createItem } from '@services/api';
 import { useTheme } from '@theme';
-import { STRINGS } from '@config';
 import { layout, margins, paddings } from '@theme/styles';
 import { RootStackParamList } from '@navigation/types';
+import { useTranslationHook } from '@services/hooks';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Create'>;
 
 export default function CreateScreen({ navigation }: Props) {
   const queryClient = useQueryClient();
   const { colors } = useTheme();
+  const { t } = useTranslationHook();
 
   /* ------------------ FORM STATE ------------------ */
   const [name, setName] = useState('');
@@ -33,12 +34,12 @@ export default function CreateScreen({ navigation }: Props) {
     mutationFn: createItem,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['items'] });
-      Alert.alert(STRINGS.COMMON.SUBMIT, STRINGS.CREATE.SUCCESS, [
-        { text: STRINGS.COMMON.OK, onPress: () => navigation.goBack() },
+      Alert.alert(t('common.submit'), t('create.success'), [
+        { text: t('common.ok'), onPress: () => navigation.goBack() },
       ]);
     },
     onError: () => {
-      Alert.alert(STRINGS.COMMON.ERROR, STRINGS.CREATE.ERROR);
+      Alert.alert(t('common.error'), t('create.error'));
     },
   });
 
@@ -47,20 +48,20 @@ export default function CreateScreen({ navigation }: Props) {
     const newErrors: { name?: string; description?: string } = {};
 
     if (!name.trim()) {
-      newErrors.name = STRINGS.VALIDATION.NAME_REQUIRED;
+      newErrors.name = t('validation.nameRequired');
     } else if (name.trim().length < 2) {
-      newErrors.name = STRINGS.VALIDATION.NAME_MIN_LENGTH;
+      newErrors.name = t('validation.nameMinLength');
     }
 
     if (!description.trim()) {
-      newErrors.description = STRINGS.VALIDATION.DESCRIPTION_REQUIRED;
+      newErrors.description = t('validation.descriptionRequired');
     } else if (description.trim().length < 10) {
-      newErrors.description = STRINGS.VALIDATION.DESCRIPTION_MIN_LENGTH;
+      newErrors.description = t('validation.descriptionMinLength');
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [description, name]);
+  }, [description, name, t]);
 
   /* ------------------ SUBMIT ------------------ */
   const handleSubmit = useCallback(() => {
@@ -89,16 +90,16 @@ export default function CreateScreen({ navigation }: Props) {
           margins.mbXl,
           { backgroundColor: colors.surface, padding: 16, borderRadius: 12 }
         ]}>
-          <Text variant="h3" style={{ color: colors.text }}>{STRINGS.CREATE.HEADER}</Text>
+          <Text variant="h3" style={{ color: colors.text }}>{t('create.header')}</Text>
           <Text variant="body" color="muted" style={margins.mtXs}>
-            {STRINGS.CREATE.SUBTITLE}
+            {t('create.subtitle')}
           </Text>
         </View>
 
         {/* Form */}
         <View style={margins.mbXl}>
           <Input
-            label={STRINGS.FORM.NAME}
+            label={t('form.name')}
             value={name}
             onChangeText={setName}
             error={errors.name}
@@ -107,7 +108,7 @@ export default function CreateScreen({ navigation }: Props) {
           />
 
           <Input
-            label={STRINGS.FORM.DESCRIPTION}
+            label={t('form.description')}
             value={description}
             onChangeText={setDescription}
             error={errors.description}
@@ -116,25 +117,25 @@ export default function CreateScreen({ navigation }: Props) {
           />
 
           <Input
-            label={STRINGS.FORM.PRICE_OPTIONAL}
+            label={t('form.priceOptional')}
             value={price}
             onChangeText={setPrice}
             keyboardType="decimal-pad"
-            helperText={STRINGS.CREATE.PRICE_HELPER}
+            helperText={t('create.priceHelper')}
           />
         </View>
 
         {/* Actions */}
         <View style={margins.mtLg}>
           <Button
-            title={STRINGS.CREATE.TITLE}
+            title={t('create.title')}
             fullWidth
             loading={createMutation.isPending}
             onPress={handleSubmit}
             style={margins.mbMd}
           />
           <Button
-            title={STRINGS.COMMON.CANCEL}
+            title={t('common.cancel')}
             variant="ghost"
             fullWidth
             onPress={() => navigation.goBack()}

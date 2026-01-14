@@ -1,0 +1,125 @@
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "retry": "Retry",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "navigation": {
+    "home": "Home",
+    "profile": "Profile",
+    "create": "Create",
+    "edit": "Edit",
+    "detail": "Details"
+  },
+  "home": {
+    "title": "My Items",
+    "addNew": "Add New",
+    "deleteTitle": "Delete Item",
+    "deleteMessage": "Are you sure you want to delete {{name}}?",
+    "noItemsTitle": "No Items Yet",
+    "noItemsDescription": "Get started by creating your first item"
+  },
+  "profile": {
+    "title": "My Profile",
+    "accountSettings": "Account Settings",
+    "accountInfo": "Account Information",
+    "userId": "User ID",
+    "memberSince": "Member Since",
+    "darkMode": "Dark Mode",
+    "darkModeDesc": "Enable dark theme",
+    "notifications": "Notifications",
+    "notificationsDesc": "Receive push notifications",
+    "notificationsDisableInfo": "To disable notifications, please go to your device settings",
+    "openSettings": "Open Settings",
+    "language": "Language",
+    "languageDesc": "Select your preferred language",
+    "theme": "Theme",
+    "logout": "Logout",
+    "version": "App Version",
+    "customizeHint": "Customize your profile and preferences here",
+    "noResults": "No user data available"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "signOutConfirm": "Are you sure you want to sign out?",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember me",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "invalidEmail": "Please enter a valid email",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "create": {
+    "title": "Create New Item",
+    "header": "Create New Item",
+    "subtitle": "Fill in the details to create a new item",
+    "priceHelper": "Enter price (optional)",
+    "success": "Item created successfully!",
+    "error": "Failed to create item. Please try again."
+  },
+  "edit": {
+    "title": "Edit Item",
+    "subtitle": "Update the item details",
+    "saveChanges": "Save Changes",
+    "success": "Item updated successfully!",
+    "error": "Failed to update item. Please try again."
+  },
+  "detail": {
+    "title": "Item Details",
+    "created": "Created",
+    "updated": "Last Updated",
+    "editButton": "Edit Item",
+    "deleteButton": "Delete Item",
+    "deleteConfirm": "Are you sure you want to delete {{name}}?",
+    "error": "Failed to delete item. Please try again."
+  },
+  "form": {
+    "name": "Name",
+    "description": "Description",
+    "priceOptional": "Price (Optional)",
+    "email": "Email Address"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "nameMinLength": "Name must be at least 2 characters",
+    "descriptionRequired": "Description is required",
+    "descriptionMinLength": "Description must be at least 10 characters"
+  },
+  "alerts": {
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm"
+  },
+  "errors": {
+    "networkError": "Network error. Please check your connection.",
+    "serverError": "Server error. Please try again later.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "notFound": "Resource not found.",
+    "validation": "Please check your input and try again.",
+    "unknownError": "An unknown error occurred. Please try again.",
+    "loadItems": "Failed to load items",
+    "deleteItem": "Failed to delete item",
+    "unknown": "An unknown error occurred"
+  },
+  "messages": {
+    "deleteConfirm": "Are you sure you want to delete this item?",
+    "unsavedChanges": "You have unsaved changes. Do you want to save?",
+    "offline": "You are currently offline. Some features may be limited.",
+    "online": "You are back online."
+  },
+}

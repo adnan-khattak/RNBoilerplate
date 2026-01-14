@@ -5,6 +5,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { useLanguageContext } from '@state/LanguageContext';
 import { QUERY_KEYS } from '@config';
 import { getItems, getItem, createItem, updateItem, deleteItem, Item } from './api';
 import { itemsCacheService, itemCacheService } from './offlineCache';
@@ -90,4 +92,43 @@ export const useDeleteItem = () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ITEMS] });
     },
   });
+};
+
+/**
+ * =======================
+ * LANGUAGE & i18n HOOKS
+ * =======================
+ */
+
+/**
+ * Hook to access translations and language utilities
+ * 
+ * Usage:
+ * const { t } = useTranslationHook();
+ * const greeting = t('home.title');
+ * 
+ * Returns:
+ * - t: Translation function for keys
+ * - i18n: i18next instance for advanced operations
+ */
+export const useTranslationHook = () => {
+  return useTranslation();
+};
+
+/**
+ * Hook to manage language switching and get current language
+ * 
+ * Usage:
+ * const { language, changeLanguage, availableLanguages } = useLanguage();
+ * await changeLanguage('fr');
+ * 
+ * Returns:
+ * - language: Current language code (e.g., 'en', 'fr')
+ * - availableLanguages: Array of supported languages
+ * - changeLanguage: Async function to change language
+ * - isInitialized: Whether language has been initialized
+ * - error: Any initialization or change errors
+ */
+export const useLanguage = () => {
+  return useLanguageContext();
 };

@@ -6,15 +6,15 @@ import { Button, Text, ItemCard } from '@components';
 import { deleteItem, Item } from '@services/api';
 import { useAuth } from '@state/AuthContext';
 import { useTheme, spacing } from '@theme';
-import { STRINGS } from '@config';
 import { layout, margins, paddings, imageStyles, avatarStyles, contentStyles } from '@theme/styles';
 import { AppStackParamList } from '@navigation/types';
-import { useItems } from '@services/hooks';
+import { useItems, useTranslationHook } from '@services/hooks';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Home'>;
 const ITEM_HEIGHT = 160;
 export default function HomeScreen({ navigation }: Props) {
   const { colors } = useTheme();
+  const { t } = useTranslationHook();
    const {
     data: items = [],
     isLoading,
@@ -52,12 +52,12 @@ export default function HomeScreen({ navigation }: Props) {
    const handleDelete = useCallback(
     (item: Item) => {
       Alert.alert(
-        STRINGS.HOME.DELETE_TITLE,
-        STRINGS.HOME.DELETE_MESSAGE(item.name),
+        t('home.deleteTitle'),
+        t('home.deleteMessage', { name: item.name }),
         [
-          { text: STRINGS.COMMON.CANCEL, style: 'cancel' },
+          { text: t('common.cancel'), style: 'cancel' },
           {
-            text: STRINGS.COMMON.DELETE,
+            text: t('common.delete'),
             style: 'destructive',
             onPress: async () => {
               try {
@@ -65,8 +65,8 @@ export default function HomeScreen({ navigation }: Props) {
                 refetch(); // ✅ React Query refresh
               } catch {
                 Alert.alert(
-                  STRINGS.ALERTS.ERROR,
-                  STRINGS.ERRORS.DELETE_ITEM
+                  t('alerts.error'),
+                  t('errors.deleteItem')
                 );
               }
             },
@@ -74,7 +74,7 @@ export default function HomeScreen({ navigation }: Props) {
         ]
       );
     },
-    [refetch]
+    [refetch, t]
   );
 
  const onRefresh = useCallback(() => {
@@ -108,7 +108,7 @@ export default function HomeScreen({ navigation }: Props) {
   const renderEmpty = () => (
     <View style={[layout.flex1, layout.center, contentStyles.emptyContainer]}>
       <Text variant="h4" color="muted" align="center">
-        {STRINGS.HOME.NO_ITEMS_TITLE}
+        {t('home.noItemsTitle')}
       </Text>
       <Text
         variant="body"
@@ -116,7 +116,7 @@ export default function HomeScreen({ navigation }: Props) {
         align="center"
         style={margins.mtSm}
       >
-        {STRINGS.HOME.NO_ITEMS_DESCRIPTION}
+        {t('home.noItemsDescription')}
       </Text>
     </View>
   );
@@ -158,11 +158,11 @@ export default function HomeScreen({ navigation }: Props) {
               </View>
             )}
           </TouchableOpacity>
-          <Text variant="h3">{STRINGS.HOME.TITLE}</Text>
+          <Text variant="h3">{t('home.title')}</Text>
         </View>
 
         <Button
-          title={STRINGS.HOME.ADD_NEW}
+          title={t('home.addNew')}
           variant="primary"
           size="small"
           onPress={() => navigation.navigate('Create')}

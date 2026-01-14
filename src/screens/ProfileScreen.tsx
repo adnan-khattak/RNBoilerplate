@@ -4,17 +4,17 @@
  */
 
 import React, { useCallback, useState } from 'react';
-import { View, ScrollView, Image, Alert, Switch } from 'react-native';
+import { View, ScrollView, Image, Alert, Switch, TouchableOpacity, StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Button, Text, Card } from '@components';
 import { useAuth } from '@state/AuthContext';
 import { useTheme } from '@theme';
-import { STRINGS } from '@config';
 import { layout, margins, paddings } from '@theme/styles';
 import { AppStackParamList } from '@navigation/types';
 import notificationService from '@services/notification/Notification';
+import { useLanguage, useTranslationHook } from '@services/hooks';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Profile'>;
 
@@ -24,6 +24,11 @@ export default function ProfileScreen({}: Props) {
   const { user } = authState;
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean | null>(null);
   const [isPermissionBusy, setIsPermissionBusy] = useState(false);
+  
+  // Language management
+  const { language, changeLanguage, availableLanguages } = useLanguage();
+  const { t } = useTranslationHook();
+  const [isChangingLanguage, setIsChangingLanguage] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -48,12 +53,12 @@ export default function ProfileScreen({}: Props) {
 
   const handleLogout = useCallback(() => {
     Alert.alert(
-      STRINGS.AUTH.SIGN_OUT,
-      STRINGS.AUTH.SIGN_OUT_CONFIRM,
+      t('auth.signOut'),
+      t('auth.signOutConfirm'),
       [
-        { text: STRINGS.COMMON.CANCEL, style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: STRINGS.AUTH.SIGN_OUT,
+          text: t('auth.signOut'),
           style: 'destructive',
           onPress: async () => {
             await signOut();
@@ -61,7 +66,7 @@ export default function ProfileScreen({}: Props) {
         },
       ]
     );
-  }, [signOut]);
+  }, [signOut, t]);
 
   const handleToggleNotifications = useCallback(async (value: boolean) => {
     if (value) {
@@ -78,22 +83,50 @@ export default function ProfileScreen({}: Props) {
     }
 
     Alert.alert(
-      STRINGS.PROFILE.NOTIFICATIONS,
-      STRINGS.PROFILE.NOTIFICATIONS_DISABLE_INFO,
+      t('profile.notifications'),
+      t('profile.notificationsDisableInfo'),
       [
-        { text: STRINGS.COMMON.CANCEL, style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: STRINGS.PROFILE.OPEN_SETTINGS,
+          text: t('profile.openSettings'),
           onPress: () => notificationService.openPermissionSettings(),
         },
       ]
     );
-  }, []);
+  }, [t]);
+
+  const handleLanguageChange = useCallback(async (lang: string) => {
+    if (lang === language) return;
+    
+    setIsChangingLanguage(true);
+    try {
+      await changeLanguage(lang);
+      Alert.alert(
+        t('common.success'),
+        `Language changed to ${getLanguageLabel(lang)}`
+      );
+    } catch (error) {
+      Alert.alert(
+        t('common.error'),
+        `Failed to change language: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    } finally {
+      setIsChangingLanguage(false);
+    }
+  }, [language, changeLanguage, t]);
+
+  const getLanguageLabel = (lang: string): string => {
+    const labels: Record<string, string> = {
+      en: '🇬🇧 English',
+      fr: '🇫🇷 Français',
+    };
+    return labels[lang] || lang.toUpperCase();
+  };
 
   if (!user) {
     return (
       <View style={[layout.container, layout.center]}>
-        <Text variant="body" color="muted">{STRINGS.COMMON.NO_RESULTS}</Text>
+        <Text variant="body" color="muted">{t('profile.noResults')}</Text>
       </View>
     );
   }
@@ -103,13 +136,13 @@ export default function ProfileScreen({}: Props) {
       contentContainerStyle={[paddings.pBase, paddings.pbXl]}
     >
       {/* Dark Header */}
-      <View style={[
+      {/* <View style={[
         layout.center, 
         margins.mbXl,
         { backgroundColor: colors.surface, padding: 16, borderRadius: 12 }
       ]}>
-        <Text variant="h3" style={{ color: colors.text }}>Profile</Text>
-      </View>
+        <Text variant="h3" style={{ color: colors.text }}>{t('profile.title')}</Text>
+      </View> */}
       
       {/* Avatar Section */}
       <View style={[layout.center, margins.mbXl]}>
@@ -145,21 +178,21 @@ export default function ProfileScreen({}: Props) {
 
       {/* User Info Card */}
       <Card variant="outlined" style={margins.mbLg}>
-        <Text variant="label" color="muted" style={margins.mbSm}>{STRINGS.PROFILE.ACCOUNT_INFO}</Text>
+        <Text variant="label" color="muted" style={margins.mbSm}>{t('profile.accountInfo')}</Text>
         
         <View style={[layout.rowBetween, margins.mbSm]}>
-          <Text variant="body" color="muted">{STRINGS.PROFILE.USER_ID}</Text>
+          <Text variant="body" color="muted">{t('profile.userId')}</Text>
           <Text variant="body">{user.id}</Text>
         </View>
         
         <View style={[layout.rowBetween, margins.mbSm]}>
-          <Text variant="body" color="muted">{STRINGS.FORM.EMAIL}</Text>
+          <Text variant="body" color="muted">{t('auth.email')}</Text>
           <Text variant="body">{user.email}</Text>
         </View>
         
         {user.createdAt && (
           <View style={layout.rowBetween}>
-            <Text variant="body" color="muted">{STRINGS.PROFILE.MEMBER_SINCE}</Text>
+            <Text variant="body" color="muted">{t('profile.memberSince')}</Text>
             <Text variant="body">
               {new Date(user.createdAt).toLocaleDateString()}
             </Text>
@@ -172,10 +205,10 @@ export default function ProfileScreen({}: Props) {
         <View style={[layout.rowBetween, { alignItems: 'center' }]}> 
           <View style={{ flex: 1, marginRight: 12 }}>
             <Text variant="label" color="muted" style={margins.mbXs}>
-              {STRINGS.PROFILE.DARK_MODE}
+              {t('profile.darkMode')}
             </Text>
             <Text variant="body" color="muted">
-              {STRINGS.PROFILE.DARK_MODE_DESC}
+              {t('profile.darkModeDesc')}
             </Text>
           </View>
           <Switch
@@ -192,10 +225,10 @@ export default function ProfileScreen({}: Props) {
         <View style={[layout.rowBetween, { alignItems: 'center' }]}> 
           <View style={{ flex: 1, marginRight: 12 }}>
             <Text variant="label" color="muted" style={margins.mbXs}>
-              {STRINGS.PROFILE.NOTIFICATIONS}
+              {t('profile.notifications')}
             </Text>
             <Text variant="body" color="muted">
-              {STRINGS.PROFILE.NOTIFICATIONS_DESC}
+              {t('profile.notificationsDesc')}
             </Text>
           </View>
           <Switch
@@ -208,10 +241,73 @@ export default function ProfileScreen({}: Props) {
         </View>
       </Card>
 
+      {/* Language Selection */}
+      <Card variant="outlined" style={margins.mbLg}>
+        <View>
+          <Text variant="label" color="muted" style={margins.mbMd}>
+            {t('profile.language')}
+          </Text>
+          <Text variant="body" color="muted" style={margins.mbMd}>
+            {t('profile.languageDesc')}
+          </Text>
+          
+          {/* Language Options */}
+          {availableLanguages.map((lang) => (
+            <TouchableOpacity
+              key={lang}
+              onPress={() => handleLanguageChange(lang)}
+              disabled={isChangingLanguage}
+              style={[
+                styles.languageOption,
+                {
+                  backgroundColor: lang === language ? colors.primaryLight : colors.backgroundSecondary,
+                  borderColor: lang === language ? colors.primary : colors.gray300,
+                  opacity: isChangingLanguage ? 0.6 : 1,
+                }
+              ]}
+            >
+              <View style={styles.languageContent}>
+                <View style={[
+                  styles.radioButton,
+                  {
+                    borderColor: lang === language ? colors.primary : colors.gray400,
+                    backgroundColor: lang === language ? colors.primary : 'transparent',
+                  }
+                ]}>
+                  {lang === language && (
+                    <View style={[styles.radioButtonInner, { backgroundColor: colors.white }]} />
+                  )}
+                </View>
+                <Text 
+                  variant="body" 
+                  style={[
+                    styles.languageText,
+                    { color: lang === language ? colors.primary : colors.text }
+                  ]}
+                >
+                  {getLanguageLabel(lang)}
+                </Text>
+              </View>
+              {lang === language && (
+                <Text variant="caption" style={{ color: colors.primary }}>
+                  ✓ {t('common.ok')}
+                </Text>
+              )}
+            </TouchableOpacity>
+          ))}
+          
+          {isChangingLanguage && (
+            <Text variant="caption" color="muted" align="center" style={margins.mtSm}>
+              {t('common.loading')}
+            </Text>
+          )}
+        </View>
+      </Card>
+
       {/* Actions */}
       <View style={margins.mtLg}>
         <Button
-          title={STRINGS.AUTH.SIGN_OUT}
+          title={t('auth.signOut')}
           variant="danger"
           fullWidth
           onPress={handleLogout}
@@ -221,9 +317,44 @@ export default function ProfileScreen({}: Props) {
       {/* Customization hint */}
       <View style={[margins.mtXl, paddings.pMd, { backgroundColor: colors.backgroundSecondary, borderRadius: 12 }]}>
         <Text variant="caption" color="muted" align="center">
-          {STRINGS.PROFILE.CUSTOMIZE_HINT}
+          {t('profile.customizeHint')}
         </Text>
       </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  languageOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 14,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    marginBottom: 10,
+  },
+  languageContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  radioButton: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  radioButtonInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  languageText: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+});

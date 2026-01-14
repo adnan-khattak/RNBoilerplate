@@ -5,9 +5,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Button, Text, ErrorState, Loading } from '@components';
 import { deleteItem } from '@services/api';
-import { useItem } from '@services/hooks';
+import { useItem, useTranslationHook } from '@services/hooks';
 import { useTheme, spacing, borderRadius } from '@theme';
-import { STRINGS } from '@config';
 import {
   layout,
   margins,
@@ -21,6 +20,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
 export default function DetailScreen({ navigation, route }: Props) {
   const { colors } = useTheme();
+  const { t } = useTranslationHook();
   const routeItem = (route as any)?.params?.item;
   const itemId = routeItem?.id;
   
@@ -35,7 +35,7 @@ export default function DetailScreen({ navigation, route }: Props) {
       navigation.goBack();
     },
     onError: () => {
-      Alert.alert(STRINGS.COMMON.ERROR, STRINGS.DETAIL.ERROR);
+      Alert.alert(t('common.error'), t('detail.error'));
     },
   });
 
@@ -51,10 +51,10 @@ export default function DetailScreen({ navigation, route }: Props) {
     return (
       <View style={layout.container}>
         <ErrorState
-          title={STRINGS.ALERTS.ERROR}
-          message={error?.message || STRINGS.ERRORS.UNKNOWN}
+          title={t('alerts.error')}
+          message={error?.message || t('errors.unknown')}
           onRetry={refetch}
-          retryLabel={STRINGS.COMMON.RETRY}
+          retryLabel={t('common.retry')}
         />
       </View>
     );
@@ -69,12 +69,12 @@ export default function DetailScreen({ navigation, route }: Props) {
 
   const handleDelete = () => {
     Alert.alert(
-      STRINGS.COMMON.DELETE,
-      STRINGS.DETAIL.DELETE_CONFIRM(item.name),
+      t('common.delete'),
+      t('detail.deleteConfirm', { name: item.name }),
       [
-        { text: STRINGS.COMMON.CANCEL, style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: STRINGS.COMMON.DELETE,
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => deleteMutation.mutate(item.id),
         },
@@ -91,7 +91,7 @@ export default function DetailScreen({ navigation, route }: Props) {
       <View style={[
         { backgroundColor: colors.surface, padding: 16, borderRadius: 12, marginBottom: 16 }
       ]}>
-        <Text variant="h3" style={{ color: colors.text }}>Item Details</Text>
+        <Text variant="h3" style={{ color: colors.text }}>{t('detail.title')}</Text>
       </View>
       
       {/* Main Card */}
@@ -136,7 +136,7 @@ export default function DetailScreen({ navigation, route }: Props) {
         {/* Description */}
         <View style={margins.mbLg}>
           <Text variant="label" color="muted" style={margins.mbXs}>
-            {STRINGS.FORM.DESCRIPTION}
+            {t('form.description')}
           </Text>
           <Text variant="body">{item.description}</Text>
         </View>
@@ -154,7 +154,7 @@ export default function DetailScreen({ navigation, route }: Props) {
         >
           <View style={layout.rowBetween}>
             <Text variant="caption" color="muted">
-              {STRINGS.DETAIL.CREATED}
+              {t('detail.created')}
             </Text>
             <Text variant="bodySmall">
               {formattedCreatedAt}
@@ -163,7 +163,7 @@ export default function DetailScreen({ navigation, route }: Props) {
 
           <View style={layout.rowBetween}>
             <Text variant="caption" color="muted">
-              {STRINGS.DETAIL.UPDATED}
+              {t('detail.updated')}
             </Text>
             <Text variant="bodySmall">
               {formattedUpdatedAt}
@@ -182,13 +182,13 @@ export default function DetailScreen({ navigation, route }: Props) {
       {/* Actions */}
       <View style={margins.mtXl}>
         <Button
-          title={STRINGS.DETAIL.EDIT_BUTTON}
+          title={t('detail.editButton')}
           fullWidth
           onPress={handleEdit}
           style={margins.mbMd}
         />
         <Button
-          title={STRINGS.DETAIL.DELETE_BUTTON}
+          title={t('detail.deleteButton')}
           variant="danger"
           fullWidth
           loading={deleteMutation.isPending}
@@ -196,7 +196,7 @@ export default function DetailScreen({ navigation, route }: Props) {
           style={margins.mbMd}
         />
         <Button
-          title={STRINGS.COMMON.BACK}
+          title={t('common.back')}
           variant="ghost"
           fullWidth
           onPress={() => navigation.goBack()}

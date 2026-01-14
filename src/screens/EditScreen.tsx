@@ -11,9 +11,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Button, Text, Input, Loading } from '@components';
 import { updateItem, Item } from '@services/api';
-import { useItem } from '@services/hooks';
+import { useItem, useTranslationHook } from '@services/hooks';
 import { useTheme } from '@theme';
-import { STRINGS } from '@config';
 import { layout, margins, paddings } from '@theme/styles';
 import { RootStackParamList } from '@navigation/types';
 
@@ -21,6 +20,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Edit'>;
 
 export default function EditScreen({ navigation, route }: Props) {
   const { colors } = useTheme();
+  const { t } = useTranslationHook();
   const routeItem = route.params?.item;
   const itemId = routeItem?.id;
   
@@ -49,12 +49,12 @@ export default function EditScreen({ navigation, route }: Props) {
     mutationFn: (data: Partial<Item>) => updateItem(item.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['items'] });
-      Alert.alert('Success', 'Item updated successfully', [
-        { text: 'OK', onPress: () => navigation.goBack() },
+      Alert.alert(t('common.success'), t('edit.success'), [
+        { text: t('common.ok'), onPress: () => navigation.goBack() },
       ]);
     },
     onError: () => {
-      Alert.alert('Error', 'Failed to update item');
+      Alert.alert(t('common.error'), t('edit.error'));
     },
   });
 
@@ -63,20 +63,20 @@ export default function EditScreen({ navigation, route }: Props) {
     const newErrors: { name?: string; description?: string } = {};
 
     if (!name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = t('validation.nameRequired');
     } else if (name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
+      newErrors.name = t('validation.nameMinLength');
     }
 
     if (!description.trim()) {
-      newErrors.description = 'Description is required';
+      newErrors.description = t('validation.descriptionRequired');
     } else if (description.trim().length < 10) {
-      newErrors.description = 'Description must be at least 10 characters';
+      newErrors.description = t('validation.descriptionMinLength');
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [description, name]);
+  }, [description, name, t]);
 
   /* ------------------ SUBMIT ------------------ */
   const handleSubmit = useCallback(() => {
@@ -117,16 +117,16 @@ export default function EditScreen({ navigation, route }: Props) {
           <View style={[
             { backgroundColor: colors.surface, padding: 16, borderRadius: 12, marginBottom: 24 }
           ]}>
-            <Text variant="h3" style={{ color: colors.text }}>{STRINGS.EDIT.TITLE}</Text>
+            <Text variant="h3" style={{ color: colors.text }}>{t('edit.title')}</Text>
             <Text variant="body" color="muted" style={margins.mtXs}>
-              {STRINGS.EDIT.SUBTITLE}
+              {t('edit.subtitle')}
             </Text>
           </View>
 
           {/* Form */}
           <View style={margins.mbXl}>
             <Input
-              label={STRINGS.FORM.NAME}
+              label={t('form.name')}
               value={name}
               onChangeText={setName}
               error={errors.name}
@@ -134,7 +134,7 @@ export default function EditScreen({ navigation, route }: Props) {
             />
 
             <Input
-              label={STRINGS.FORM.DESCRIPTION}
+              label={t('form.description')}
               value={description}
               onChangeText={setDescription}
               error={errors.description}
@@ -143,18 +143,18 @@ export default function EditScreen({ navigation, route }: Props) {
             />
 
             <Input
-              label={STRINGS.FORM.PRICE_OPTIONAL}
+              label={t('form.priceOptional')}
               value={price}
               onChangeText={setPrice}
               keyboardType="decimal-pad"
-              helperText={STRINGS.CREATE.PRICE_HELPER}
+              helperText={t('create.priceHelper')}
             />
           </View>
 
           {/* Actions */}
           <View style={margins.mtLg}>
             <Button
-              title={STRINGS.EDIT.SAVE_CHANGES}
+              title={t('edit.saveChanges')}
               fullWidth
               loading={updateMutation.isPending}
               disabled={!hasChanges()}
@@ -162,7 +162,7 @@ export default function EditScreen({ navigation, route }: Props) {
               style={margins.mbMd}
             />
             <Button
-              title={STRINGS.COMMON.CANCEL}
+              title={t('common.cancel')}
               variant="ghost"
               fullWidth
               onPress={() => navigation.goBack()}
