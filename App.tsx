@@ -2,8 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { I18nextProvider } from 'react-i18next';
-import { NavigationContainer } from '@react-navigation/native';
-import RootNavigator from './src/navigation/RootNavigator'; // Updated version without NavigationContainer
+import { NavigationWrapper } from './src/navigation/NavigationWrapper';
 import { AppProvider } from './src/state/AppContext';
 import { AuthProvider } from './src/state/AuthContext';
 import { ThemeProvider } from './src/theme';
@@ -18,7 +17,6 @@ const queryClient = new QueryClient();
 
 export default function App() {
   const navigationRef = useRef<any>(null);
-  const routeNameRef = useRef<string | undefined>(undefined);
   const netInfo = useNetInfo();
   const handleNavigation = (screenName: string, params?: any) => {
     if (navigationRef.current) {
@@ -96,28 +94,8 @@ export default function App() {
                 {/* Network status banner */}
                 <NetworkBanner isConnected={netInfo.isConnected} />
 
-                {/* Single NavigationContainer at root */}
-                <NavigationContainer
-                  ref={navigationRef}
-                  onReady={() => {
-                    const route = navigationRef.current?.getCurrentRoute();
-                    const name = route?.name;
-                    routeNameRef.current = name;
-                    if (name) Analytics.screen(name);
-
-                    console.log('🧭 Navigation is ready!');
-                  }}
-                  onStateChange={async () => {
-                    const route = navigationRef.current?.getCurrentRoute();
-                    const name = route?.name;
-                    if (name && routeNameRef.current !== name) {
-                      routeNameRef.current = name;
-                      Analytics.screen(name);
-                    }
-                  }}
-                >
-                  <RootNavigator />
-                </NavigationContainer>
+                {/* Navigation wrapper with RTL support */}
+                <NavigationWrapper navigationRef={navigationRef} />
               </AppProvider>
             </AuthProvider>
           </ThemeProvider>

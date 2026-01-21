@@ -1,158 +1,299 @@
-# React Native CRUD Boilerplate
+# React Native Boilerplate
 
-This boilerplate is for production-ready React Native apps with auth, API, offline support, theming, notifications, and scalability.
+A production-ready React Native boilerplate with authentication, offline-first data fetching, theming, and internationalization.
 
-## ✨ Features
+## Table of Contents
 
-- **🔐 Authentication** - Complete auth flow (SignIn/SignUp) with MockAPI
-- **TypeScript** - Type-safe development
-- **React Navigation v7** - Native stack navigation with typed routes & auth guards
-- **React Query (TanStack Query)** - Powerful data fetching & caching
-- **Context + Reducer** - Lightweight global state management
-- **Theming System** - Design tokens (colors, spacing, typography)
-- **Reusable Components** - Button, Input, Text, Card, Loading, EmptyState, ErrorState
-- **Path Aliases** - Clean imports with `@components`, `@screens`, etc.
-- **CRUD Ready** - Complete Create, Read, Update, Delete flow
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [Authentication Flow](#authentication-flow)
+- [Data Fetching & Caching](#data-fetching--caching)
+- [Theme System](#theme-system)
+- [Localization & RTL Support](#localization--rtl-support)
+- [Navigation](#navigation)
+- [Push Notifications](#push-notifications)
+- [Reusable Components](#reusable-components)
+- [Configuration](#configuration)
 
-## 📁 Project Structure
+---
+
+## Features
+
+- **Authentication** - Sign in/up with persistent sessions via MMKV
+- **Offline-First** - MMKV caching with automatic network fallback
+- **Dark/Light Theme** - System-aware theming with manual toggle
+- **Multi-language** - English, French, Arabic with full RTL support
+- **Push Notifications** - Firebase Cloud Messaging + Notifee
+- **QR/Barcode Scanner** - Vision Camera integration
+- **Type Safety** - Full TypeScript coverage with path aliases
+- **Analytics** - Firebase Analytics built-in
+
+---
+
+## Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Framework | React Native 0.83 |
+| Language | TypeScript |
+| Navigation | React Navigation 7 |
+| Server State | TanStack React Query 5 |
+| Client State | React Context + Reducers |
+| Storage | MMKV (encrypted, high-performance) |
+| i18n | i18next + react-i18next |
+| Notifications | Firebase Messaging + Notifee |
+| Camera | Vision Camera |
+
+---
+
+## Project Structure
 
 ```
-src/
-├── assets/          # Images, fonts, etc.
-├── components/      # Reusable UI components
-│   ├── Button.tsx
-│   ├── Card.tsx
-│   ├── EmptyState.tsx
-│   ├── ErrorState.tsx
-│   ├── Input.tsx
-│   ├── Loading.tsx
-│   ├── Text.tsx
-│   └── index.ts
-├── config/          # App configuration & constants
-│   ├── constants.ts     # API config & feature flags
-│   ├── strings.ts       # 🌐 All app text (easy i18n)
-│   ├── colors.ts        # 🎨 Global color palette
-│   └── index.ts
-├── navigation/      # Navigation setup & types
-│   ├── RootNavigator.tsx  # Auth-aware navigator
-│   └── types.ts           # AuthStack & AppStack types
-├── screens/         # Screen components
-│   ├── SignInScreen.tsx   # 🔐 Auth
-│   ├── SignUpScreen.tsx   # 🔐 Auth
-│   ├── HomeScreen.tsx
-│   ├── CreateScreen.tsx
-│   ├── DetailScreen.tsx
-│   ├── EditScreen.tsx
-│   └── ProfileScreen.tsx  # User profile & logout
-├── services/        # API calls & hooks
-│   ├── api.ts           # CRUD API functions
-│   ├── authApi.ts       # 🔐 Auth API (login, register)
-│   ├── authStorage.ts   # 🔐 Token/user persistence
-│   ├── authHooks.ts     # 🔐 React Query auth hooks
-│   ├── hooks.ts         # CRUD React Query hooks
-│   └── index.ts
-├── state/           # Global state (Context + Reducer)
-│   ├── AuthContext.tsx   # 🔐 Auth provider & useAuth hook
-│   ├── authReducer.ts    # 🔐 Auth state reducer
-│   ├── authTypes.ts      # 🔐 User, AuthState types
-│   ├── AppContext.tsx
-│   ├── appReducer.ts
-│   └── appTypes.ts
-├── theme/           # Design tokens & styles
-│   ├── theme.ts
-│   ├── styles.ts
-│   └── index.ts
-└── utils/           # Helper functions
-    └── helpers.ts
+/
+├── App.tsx                    # Root component with provider hierarchy
+├── index.js                   # Entry point
+├── src/
+│   ├── components/            # Reusable UI components
+│   │   ├── Button.tsx         # Multi-variant button
+│   │   ├── Input.tsx          # Form input with validation
+│   │   ├── Text.tsx           # Typography component
+│   │   ├── Card.tsx           # Card container
+│   │   ├── ItemCard.tsx       # Item display card
+│   │   ├── Loading.tsx        # Loading indicator
+│   │   ├── EmptyState.tsx     # Empty state UI
+│   │   ├── ErrorState.tsx     # Error state UI
+│   │   └── NetworkBanner.tsx  # Online/offline indicator
+│   │
+│   ├── screens/               # Screen components
+│   │   ├── SignInScreen.tsx
+│   │   ├── SignUpScreen.tsx
+│   │   ├── HomeScreen.tsx
+│   │   ├── ProfileScreen.tsx
+│   │   ├── DetailScreen.tsx
+│   │   ├── CreateScreen.tsx
+│   │   ├── EditScreen.tsx
+│   │   └── QRScannerScreen.tsx
+│   │
+│   ├── navigation/            # Navigation configuration
+│   │   ├── RootNavigator.tsx  # Auth-aware navigator
+│   │   ├── NavigationWrapper.tsx  # RTL-aware wrapper
+│   │   └── types.ts           # Route type definitions
+│   │
+│   ├── state/                 # Global state management
+│   │   ├── AuthContext.tsx    # Auth provider & useAuth hook
+│   │   ├── authReducer.ts     # Auth state reducer
+│   │   ├── authTypes.ts       # User, AuthState types
+│   │   ├── AppContext.tsx     # General app state
+│   │   ├── appReducer.ts      # App state reducer
+│   │   └── LanguageContext.tsx # Language & RTL management
+│   │
+│   ├── services/              # API, hooks, storage
+│   │   ├── api.ts             # CRUD API functions
+│   │   ├── authApi.ts         # Auth API (login, register)
+│   │   ├── hooks.ts           # React Query data hooks
+│   │   ├── authHooks.ts       # React Query auth hooks
+│   │   ├── authStorage.ts     # Token/user persistence (MMKV)
+│   │   ├── languageStorage.ts # Language preference storage
+│   │   ├── offlineCache.ts    # Offline data cache
+│   │   ├── i18n/
+│   │   │   └── i18nConfig.ts  # i18next setup
+│   │   └── notification/
+│   │       └── Notification.ts # Push notification service
+│   │
+│   ├── theme/                 # Theming system
+│   │   ├── ThemeContext.tsx   # Theme provider & useTheme
+│   │   ├── colors.theme.ts    # Light/dark color palettes
+│   │   ├── themeStorage.ts    # Theme preference storage
+│   │   ├── styles.ts          # Shared style utilities
+│   │   └── index.ts
+│   │
+│   ├── locales/               # Translation files
+│   │   ├── en.json            # English
+│   │   ├── fr.json            # French
+│   │   └── ar.json            # Arabic (RTL)
+│   │
+│   ├── config/                # App configuration
+│   │   ├── constants.ts       # API config, keys, validation
+│   │   └── strings.ts         # Fallback strings
+│   │
+│   └── utils/                 # Utility functions
+│       └── hooks.ts           # Custom utility hooks
+│
+├── tsconfig.json              # TypeScript + path aliases
+├── babel.config.js            # Babel + module resolver
+└── package.json
 ```
 
-## 🚀 Getting Started
+---
+
+## Architecture
+
+### Provider Hierarchy
+
+The app uses a layered provider architecture for clean separation of concerns:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    QueryClientProvider                       │
+│         (React Query - server state & caching)              │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │                   I18nextProvider                      │  │
+│  │              (Translation functions)                   │  │
+│  │  ┌─────────────────────────────────────────────────┐  │  │
+│  │  │              LanguageProvider                    │  │  │
+│  │  │         (Language state & RTL control)          │  │  │
+│  │  │  ┌───────────────────────────────────────────┐  │  │  │
+│  │  │  │            ThemeProvider                   │  │  │  │
+│  │  │  │       (Dark/light mode colors)            │  │  │  │
+│  │  │  │  ┌─────────────────────────────────────┐  │  │  │  │
+│  │  │  │  │          AuthProvider                │  │  │  │  │
+│  │  │  │  │   (User session & auth actions)     │  │  │  │  │
+│  │  │  │  │  ┌───────────────────────────────┐  │  │  │  │  │
+│  │  │  │  │  │        AppProvider             │  │  │  │  │  │
+│  │  │  │  │  │   (General app state)         │  │  │  │  │  │
+│  │  │  │  │  │  ┌─────────────────────────┐  │  │  │  │  │  │
+│  │  │  │  │  │  │  NavigationWrapper      │  │  │  │  │  │  │
+│  │  │  │  │  │  │  ┌───────────────────┐  │  │  │  │  │  │  │
+│  │  │  │  │  │  │  │  RootNavigator    │  │  │  │  │  │  │  │
+│  │  │  │  │  │  │  └───────────────────┘  │  │  │  │  │  │  │
+│  │  │  │  │  │  └─────────────────────────┘  │  │  │  │  │  │
+│  │  │  │  │  └───────────────────────────────┘  │  │  │  │  │
+│  │  │  │  └─────────────────────────────────────┘  │  │  │  │
+│  │  │  └───────────────────────────────────────────┘  │  │  │
+│  │  └─────────────────────────────────────────────────┘  │  │
+│  └───────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### State Management Pattern
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                      STATE MANAGEMENT                          │
+├─────────────────────────────┬──────────────────────────────────┤
+│       SERVER STATE          │         CLIENT STATE             │
+│      (React Query)          │    (Context + Reducer)           │
+├─────────────────────────────┼──────────────────────────────────┤
+│                             │                                  │
+│  • API response data        │  • Auth state (user, token)      │
+│  • Automatic caching        │  • App state (loading, selected) │
+│  • Background sync          │  • Language preference           │
+│  • Optimistic updates       │  • Theme preference              │
+│  • Offline support          │  • UI state                      │
+│                             │                                  │
+└─────────────────────────────┴──────────────────────────────────┘
+```
+
+---
+
+## Getting Started
 
 ### Prerequisites
 
-- Node.js >= 20
-- React Native CLI
-- Xcode (for iOS)
-- Android Studio (for Android)
+- Node.js 18+
+- Watchman (macOS)
+- Xcode 15+ (iOS)
+- Android Studio (Android)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd rnBoilerplate
+git clone <repository-url>
+cd RNBoilerplate
 
 # Install dependencies
 npm install
 
 # iOS only: Install pods
 cd ios && bundle install && bundle exec pod install && cd ..
-```
 
-### Running the App
-
-```bash
 # Start Metro bundler
 npm start
 
-# Run on Android
-npm run android
-
 # Run on iOS
 npm run ios
+
+# Run on Android
+npm run android
 ```
 
-## 🎨 Using the Theme
+### Environment Setup
 
-```tsx
-import { colors, spacing, typography } from '@theme';
+1. Update API endpoint in `src/config/constants.ts`
+2. Configure Firebase:
+   - Add `google-services.json` to `android/app/`
+   - Add `GoogleService-Info.plist` to `ios/`
+3. Customize theme colors in `src/theme/colors.theme.ts`
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.background,
-    padding: spacing.base,
-  },
-  title: {
-    fontSize: typography.fontSize.xl,
-    color: colors.text,
-  },
-});
+---
+
+## Authentication Flow
+
+### Flow Diagram
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   App Start │────▶│   Hydrate   │────▶│  Check Auth │
+└─────────────┘     │  from MMKV  │     │   Status    │
+                    └─────────────┘     └──────┬──────┘
+                                               │
+                    ┌──────────────────────────┼──────────────────────────┐
+                    │                          │                          │
+                    ▼                          ▼                          ▼
+           ┌───────────────┐          ┌───────────────┐          ┌───────────────┐
+           │   No Token    │          │ Token Invalid │          │  Token Valid  │
+           │   Show Auth   │          │   Show Auth   │          │   Show App    │
+           └───────┬───────┘          └───────────────┘          └───────────────┘
+                   │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+┌───────────────┐     ┌───────────────┐
+│    Sign In    │     │    Sign Up    │
+└───────┬───────┘     └───────┬───────┘
+        │                     │
+        └──────────┬──────────┘
+                   ▼
+        ┌─────────────────────┐
+        │     API Request     │
+        │    (authApi.ts)     │
+        └──────────┬──────────┘
+                   │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+┌───────────────┐     ┌───────────────┐
+│    Success    │     │    Failure    │
+│  Store Token  │     │  Show Error   │
+│  Navigate App │     │               │
+└───────────────┘     └───────────────┘
 ```
 
-## 📦 Using Components
+### Auth Types
 
-```tsx
-import { Button, Text, Input, Card, Loading, EmptyState } from '@components';
+```typescript
+// src/state/authTypes.ts
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string;
+}
 
-// Button variants: primary, secondary, outline, ghost, danger, success
-<Button title="Submit" variant="primary" onPress={handleSubmit} />
+type AuthStatus = 'idle' | 'checking' | 'authenticated' | 'unauthenticated';
 
-// Text with variants
-<Text variant="h1">Heading</Text>
-<Text variant="body" color="muted">Description</Text>
-
-// Input with validation
-<Input label="Email" error={errors.email} required />
-
-// Loading state
-<Loading message="Fetching data..." fullScreen />
-
-// Empty state
-<EmptyState 
-  title="No items" 
-  description="Add your first item" 
-  actionLabel="Add Item"
-  onAction={() => navigation.navigate('Create')}
-/>
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  status: AuthStatus;
+}
 ```
 
-## 🔐 Authentication
+### Usage
 
-The boilerplate includes a complete auth flow using MockAPI.
-
-### Using Auth Context
-
-```tsx
+```typescript
 import { useAuth } from '@state/AuthContext';
 
 function MyComponent() {
@@ -164,215 +305,574 @@ function MyComponent() {
   }
 
   // Sign in
-  await signIn({ email: 'user@example.com', password: 'password123' });
+  await signIn('email@example.com', 'password');
 
   // Sign up
-  await signUp({ name: 'John', email: 'john@example.com', password: 'password123' });
+  await signUp({ name: 'John', email: 'john@example.com', password: 'pass' });
 
   // Sign out
   await signOut();
 }
 ```
 
-### MockAPI Setup for Auth
+### Storage Keys
 
-Create a `users` endpoint in MockAPI with these fields:
-- `id` (string)
-- `email` (string)
-- `name` (string)
-- `password` (string)
-- `avatar` (string, optional)
-- `createdAt` (string)
+Authentication data is persisted in MMKV:
 
-### Customizing Auth for Your Backend
+| Key | Content |
+|-----|---------|
+| `@auth_token` | JWT token |
+| `@user_preferences` | User object (JSON) |
 
-1. **Update API endpoints** in `src/services/authApi.ts`
-2. **Modify User type** in `src/state/authTypes.ts`
-3. **Enable persistent storage** - Uncomment AsyncStorage in `src/services/authStorage.ts`:
-   ```bash
-   npm install @react-native-async-storage/async-storage
-   ```
+---
 
-## 🔌 Using API Hooks
+## Data Fetching & Caching
 
-```tsx
-import { useItems, useCreateItem, useUpdateItem, useDeleteItem } from '@services';
+### Offline-First Architecture
 
-// Fetch all items
-const { data: items, isLoading, error, refetch } = useItems();
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     DATA FETCHING FLOW                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   ┌──────────┐    ┌───────────────┐    ┌──────────────────┐    │
+│   │  Screen  │───▶│  React Query  │───▶│    API Layer     │    │
+│   │          │    │    Hook       │    │    (api.ts)      │    │
+│   └──────────┘    └───────────────┘    └────────┬─────────┘    │
+│                                                  │              │
+│                         ┌────────────────────────┴────────┐     │
+│                         │                                 │     │
+│                         ▼                                 ▼     │
+│                 ┌───────────────┐                ┌────────────┐ │
+│                 │    Network    │                │   MMKV     │ │
+│                 │    Request    │                │   Cache    │ │
+│                 └───────┬───────┘                └──────┬─────┘ │
+│                         │                               │       │
+│            ┌────────────┴────────────┐                  │       │
+│            ▼                         ▼                  │       │
+│    ┌───────────────┐        ┌───────────────┐          │       │
+│    │   Success     │        │   Failure     │──────────┘       │
+│    │ Update Cache  │        │  Use Cache    │                  │
+│    └───────────────┘        └───────────────┘                  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### React Query Hooks
+
+```typescript
+// src/services/hooks.ts
+
+// Fetch all items (with offline fallback)
+const { data, isLoading, error, refetch } = useItems();
+
+// Fetch single item
+const { data: item } = useItem(itemId);
 
 // Create item
 const createMutation = useCreateItem();
-createMutation.mutate({ name: 'New Item', description: 'Details' });
+await createMutation.mutateAsync({ name, description, price });
 
-// Update item  
+// Update item
 const updateMutation = useUpdateItem();
-updateMutation.mutate({ id: '123', data: { name: 'Updated' } });
+await updateMutation.mutateAsync({ id, name, description, price });
 
 // Delete item
 const deleteMutation = useDeleteItem();
-deleteMutation.mutate('123');
+await deleteMutation.mutateAsync(itemId);
 ```
 
-## 🛠 Customization
+### Cache Configuration
 
-### Changing API Base URL
+```typescript
+// React Query defaults
+staleTime: 5 * 60 * 1000,      // 5 minutes - data considered fresh
+gcTime: 30 * 60 * 1000,        // 30 minutes - memory cache duration
 
-Edit `src/config/constants.ts`:
+// MMKV persistent cache
+CACHE_DURATION: 60 * 60 * 1000  // 1 hour - disk cache expiry
+```
 
-```ts
-export const API_CONFIG = {
-  BASE_URL: 'https://your-api.com/v1',
-  // ...
+### API Implementation Pattern
+
+```typescript
+// src/services/api.ts
+export const getItems = async (): Promise<Item[]> => {
+  try {
+    const response = await fetch(`${API_PREFIX}/items`);
+    const data = await response.json();
+
+    // Cache on success
+    itemsCacheService.save(data);
+    return data;
+  } catch (error) {
+    // Fallback to cache on failure
+    const cached = itemsCacheService.get();
+    if (cached) return cached;
+    throw error;
+  }
 };
 ```
 
-### 🎨 Customizing Colors
+---
 
-All colors are centralized in `src/config/colors.ts`. Update them to match your brand:
+## Theme System
 
-```ts
-// src/config/colors.ts
-export const COLORS = {
-  // Primary - Change to your brand color
-  primary: '#007AFF',        // Main buttons, links
-  primaryLight: '#4DA2FF',   // Hover states
-  primaryDark: '#0055B3',    // Pressed states
+### Theme Modes
 
-  // Secondary
+| Mode | Behavior |
+|------|----------|
+| `light` | Always light theme |
+| `dark` | Always dark theme |
+| `system` | Follows device setting |
+
+### Theme Context
+
+```typescript
+interface ThemeContextType {
+  colorScheme: 'light' | 'dark' | 'system';
+  colors: ThemeColors;
+  isDark: boolean;
+  setTheme: (scheme: ColorScheme) => void;
+  toggleTheme: () => void;
+}
+```
+
+### Usage
+
+```typescript
+import { useTheme } from '@theme';
+
+function MyComponent() {
+  const { colors, isDark, toggleTheme, setTheme } = useTheme();
+
+  return (
+    <View style={{ backgroundColor: colors.background }}>
+      <Text style={{ color: colors.text.primary }}>
+        Current theme: {isDark ? 'Dark' : 'Light'}
+      </Text>
+
+      <Button onPress={toggleTheme}>Toggle Theme</Button>
+
+      <Button onPress={() => setTheme('system')}>
+        Use System Theme
+      </Button>
+    </View>
+  );
+}
+```
+
+### Color Palette
+
+Colors are defined in `src/theme/colors.theme.ts`:
+
+```typescript
+const lightColors = {
+  primary: '#007AFF',
   secondary: '#5856D6',
-
-  // Semantic
+  background: '#FFFFFF',
+  card: '#F8F9FA',
+  text: {
+    primary: '#1A1A1A',
+    secondary: '#6B7280',
+    muted: '#9CA3AF',
+  },
+  border: '#E5E7EB',
   success: '#34C759',
   warning: '#FF9500',
   error: '#FF3B30',
-  info: '#5AC8FA',
+  // ... 90+ color tokens
+};
 
-  // Backgrounds
-  background: '#F8F9FA',
-  card: '#FFFFFF',
-  
-  // Text
-  text: '#1C1C1E',
-  textSecondary: '#6B7280',
-  textMuted: '#9CA3AF',
-
-  // ...more colors
+const darkColors = {
+  // Inverted palette for dark mode
 };
 ```
 
-### 🌐 Customizing Strings (i18n Ready)
+### Persistence
 
-All app text is in `src/config/strings.ts`. Easy to translate or customize:
+Theme preference is stored in MMKV under key `app.theme`.
 
-```ts
-// src/config/strings.ts
-export const STRINGS = {
-  AUTH: {
-    SIGN_IN: 'Sign In',
-    SIGN_UP: 'Sign Up',
-    EMAIL_PLACEHOLDER: 'Enter your email',
-    PASSWORD_PLACEHOLDER: 'Enter your password',
-    // Add more...
+---
+
+## Localization & RTL Support
+
+### Supported Languages
+
+| Language | Code | Direction |
+|----------|------|-----------|
+| English | `en` | LTR |
+| French | `fr` | LTR |
+| Arabic | `ar` | RTL |
+
+### Language Context
+
+```typescript
+interface LanguageContextType {
+  language: string;
+  availableLanguages: string[];
+  changeLanguage: (language: string) => Promise<void>;
+  isRTL: boolean;
+  isInitialized: boolean;
+}
+```
+
+### Usage
+
+```typescript
+import { useTranslation } from 'react-i18next';
+import { useLanguageContext } from '@state/LanguageContext';
+
+function MyComponent() {
+  const { t } = useTranslation();
+  const { language, changeLanguage, isRTL } = useLanguageContext();
+
+  return (
+    <View>
+      {/* Simple translation */}
+      <Text>{t('home.title')}</Text>
+
+      {/* With interpolation */}
+      <Text>{t('home.deleteMessage', { name: 'Item 1' })}</Text>
+
+      {/* Language switcher */}
+      <Button onPress={() => changeLanguage('fr')}>
+        Switch to French
+      </Button>
+    </View>
+  );
+}
+```
+
+### Translation File Structure
+
+```json
+// src/locales/en.json
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete"
   },
-  HOME: {
-    TITLE: 'Items',
-    ADD_ITEM: 'Add Item',
-    SEARCH_PLACEHOLDER: 'Search items...',
+  "home": {
+    "title": "My Items",
+    "addNew": "Add New",
+    "deleteMessage": "Are you sure you want to delete {{name}}?"
   },
-  PROFILE: {
-    TITLE: 'Profile',
-    LOGOUT: 'Logout',
-    LOGOUT_CONFIRM: 'Are you sure you want to logout?',
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
   },
-  // ...more sections
+  "profile": {
+    "title": "My Profile",
+    "darkMode": "Dark Mode",
+    "language": "Language"
+  }
+}
+```
+
+### RTL Implementation
+
+The app handles RTL layout changes without requiring a restart:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    RTL SWITCH FLOW                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐  │
+│  │ User selects │───▶│ i18next      │───▶│ I18nManager  │  │
+│  │   Arabic     │    │ changes lang │    │ forceRTL()   │  │
+│  └──────────────┘    └──────────────┘    └──────┬───────┘  │
+│                                                  │          │
+│                                                  ▼          │
+│                                         ┌──────────────┐   │
+│                                         │ Update       │   │
+│                                         │ rtlUpdateKey │   │
+│                                         └──────┬───────┘   │
+│                                                │           │
+│                                                ▼           │
+│                                         ┌──────────────┐   │
+│                                         │ Navigation   │   │
+│                                         │ re-renders   │   │
+│                                         └──────────────┘   │
+│                                                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Navigation
+
+### Stack Structure
+
+```
+RootNavigator
+│
+├── Auth Stack (when unauthenticated)
+│   ├── SignIn
+│   └── SignUp
+│
+└── App Stack (when authenticated)
+    ├── Home (initial)
+    ├── Profile
+    ├── Create
+    ├── Edit
+    ├── Detail
+    └── QRScanner
+```
+
+### Type Definitions
+
+```typescript
+// src/navigation/types.ts
+type AuthStackParamList = {
+  SignIn: undefined;
+  SignUp: undefined;
+};
+
+type AppStackParamList = {
+  Home: undefined;
+  Detail: { item: Item };
+  Create: undefined;
+  Edit: { item: Item };
+  Profile: undefined;
+  QRScanner: undefined;
 };
 ```
 
-**Usage in components:**
-```tsx
-import { STRINGS, COLORS } from '@config';
+### Usage
 
-<Text style={{ color: COLORS.primary }}>{STRINGS.HOME.TITLE}</Text>
-<Button 
-  title={STRINGS.AUTH.SIGN_IN} 
-  color={COLORS.success} 
+```typescript
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
+
+function MyScreen() {
+  const navigation = useNavigation<NavigationProp>();
+
+  // Navigate with params
+  navigation.navigate('Detail', { item });
+
+  // Go back
+  navigation.goBack();
+}
+```
+
+---
+
+## Push Notifications
+
+### Setup Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  NOTIFICATION SETUP                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   1. Request Permissions                                    │
+│      └─▶ Firebase Messaging + Notifee                       │
+│                                                             │
+│   2. Get FCM Token                                          │
+│      └─▶ Send to backend for targeting                      │
+│                                                             │
+│   3. Register Handlers                                      │
+│      ├─▶ Foreground: Show local notification                │
+│      ├─▶ Background: Firebase handles                       │
+│      └─▶ Tap: Navigate based on data.screen                 │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Notification States
+
+| State | Handler |
+|-------|---------|
+| Foreground | `messaging().onMessage()` |
+| Background | `messaging().setBackgroundMessageHandler()` |
+| Killed | Handled by Firebase |
+| Tap (any state) | `notifee.onForegroundEvent()` |
+
+### Notification Data Format
+
+```typescript
+interface NotificationData {
+  screen?: string;  // Target screen name
+  id?: string;      // Optional resource ID
+}
+```
+
+---
+
+## Reusable Components
+
+### Button
+
+```typescript
+<Button
+  title="Submit"
+  variant="primary"    // primary | secondary | outline | ghost | danger | success
+  size="medium"        // small | medium | large
+  loading={false}
+  disabled={false}
+  leftIcon="check"
+  onPress={handlePress}
 />
 ```
 
-### Adding New Screens
+### Input
 
-1. Create screen in `src/screens/`
-2. Add to `src/screens/index.ts`
-3. Add route type in `src/navigation/types.ts`
-4. Register in `src/navigation/RootNavigator.tsx`
-
-### Adding New Components
-
-1. Create component in `src/components/`
-2. Export from `src/components/index.ts`
-
-## 📝 Available Scripts
-
-- `npm start` - Start Metro bundler
-- `npm run android` - Run on Android
-- `npm run ios` - Run on iOS
-- `npm run lint` - Run ESLint
-- `npm test` - Run tests
-
-## 🤝 Contributing
-
-Feel free to submit issues and pull requests.
-
-## 📄 License
-
-MIT
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+```typescript
+<Input
+  label="Email"
+  placeholder="Enter email"
+  value={email}
+  onChangeText={setEmail}
+  keyboardType="email-address"
+  secureTextEntry={false}
+  error="Invalid email"
+/>
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### Text
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```typescript
+<Text
+  variant="h1"         // h1 | h2 | h3 | h4 | body | caption
+  weight="bold"        // regular | semiBold | bold
+  color="primary"      // primary | secondary | muted | danger
+>
+  Hello World
+</Text>
+```
 
-## Step 3: Modify your app
+### ItemCard
 
-Now that you have successfully run the app, let's make changes!
+```typescript
+<ItemCard
+  item={item}
+  onView={() => navigation.navigate('Detail', { item })}
+  onEdit={() => navigation.navigate('Edit', { item })}
+  onDelete={() => handleDelete(item.id)}
+/>
+```
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+### Loading & States
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+```typescript
+// Loading indicator
+<Loading message="Fetching data..." fullScreen />
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+// Empty state
+<EmptyState
+  title="No items"
+  description="Add your first item"
+  actionLabel="Add Item"
+  onAction={() => navigation.navigate('Create')}
+/>
 
-## Congratulations! :tada:
+// Error state
+<ErrorState
+  message="Failed to load"
+  onRetry={refetch}
+/>
+```
 
-You've successfully run and modified your React Native App. :partying_face:
+---
 
-### Now what?
+## Configuration
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+### Constants
 
-# Troubleshooting
+All app constants are in `src/config/constants.ts`:
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+```typescript
+export const API_CONFIG = {
+  BASE_URL: 'https://your-api.com/api/v1',
+  TIMEOUT: 30000,
+  RETRY_ATTEMPTS: 3,
+};
 
-# Learn More
+export const STORAGE_KEYS = {
+  AUTH_TOKEN: '@auth_token',
+  USER_PREFERENCES: '@user_preferences',
+  THEME_MODE: '@theme_mode',
+};
 
-To learn more about React Native, take a look at the following resources:
+export const QUERY_KEYS = {
+  ITEMS: 'items',
+  ITEM: (id: string) => ['items', id],
+  USER: 'user',
+};
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
-# RNBoilerplate
+export const VALIDATION = {
+  NAME_MIN_LENGTH: 2,
+  PASSWORD_MIN_LENGTH: 8,
+  EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+};
+```
+
+### Path Aliases
+
+TypeScript path aliases are configured in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["src/*"],
+      "@components": ["src/components"],
+      "@screens": ["src/screens"],
+      "@theme": ["src/theme"],
+      "@services": ["src/services"],
+      "@state": ["src/state"],
+      "@config": ["src/config"],
+      "@utils": ["src/utils"],
+      "@navigation": ["src/navigation"]
+    }
+  }
+}
+```
+
+Usage:
+
+```typescript
+import { Button } from '@components';
+import { useAuth } from '@state/AuthContext';
+import { API_CONFIG } from '@config/constants';
+```
+
+---
+
+## Scripts
+
+```bash
+npm start          # Start Metro bundler
+npm run ios        # Run on iOS simulator
+npm run android    # Run on Android emulator
+npm run lint       # Run ESLint
+npm test           # Run tests
+```
+
+---
+
+## Customization Entry Points
+
+| Feature | File |
+|---------|------|
+| API Endpoint | `src/config/constants.ts` |
+| Auth Methods | `src/services/authApi.ts` |
+| Screens | `src/screens/` + navigation types |
+| Colors | `src/theme/colors.theme.ts` |
+| Translations | `src/locales/{lang}.json` |
+| Storage Keys | `src/config/constants.ts` |
+
+---
+
+## License
+
+MIT
